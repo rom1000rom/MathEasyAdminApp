@@ -1,5 +1,7 @@
 package business;
 
+import java.util.List;
+
 import dao.*;
 import entity.User;
 import exception.UserBusinessException;
@@ -16,9 +18,17 @@ public class UserManager
         dao = UserDAOFactory.getUserDAO();
     }
     
-    /**Получить объект класса User по его ID*/
-    public User getContact(Long contactId) 
+    /**Получить объект класса User по его ID
+     * @return объект класса User*/
+    public User getUser(Long contactId) 
     {   
         return dao.getUser(contactId);       
     }
+    
+    /**Получить список пользователей
+     * @return список пользователей*/
+	public List<User> getUserList() 
+	{
+		return dao.getUserList();
+	}
 }

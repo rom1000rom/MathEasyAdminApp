@@ -26,7 +26,7 @@ public class Math_easyStart
 	    {
 	    	JFrame myframe = new Math_easyFrame();
 	    	myframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    	myframe.setTitle("Мой фрейм");
+	    	myframe.setTitle("Math Easy");
 	    	myframe.setResizable(false);	    	
 	    	myframe.setVisible(true);
 	    });   

@@ -12,4 +12,6 @@ public interface UserDAO
 {
 	/**Получить объект класса User по его ID*/
     public User getUser(Long id);
+    /**Получить список пользователей*/
+    public List<User> getUserList();
 }

@@ -14,6 +14,7 @@ public class SimpleConnectionBuilder implements ConnectionBuilder
     {
         try 
         {
+        	//Class.forName("org.postgresql.Driver");
             Class.forName(GlobalConfig.getProperty("db.driver.class"));
         } 
         catch (ClassNotFoundException ex) 

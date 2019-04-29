@@ -19,10 +19,11 @@ import exception.UserDaoException;
 public class UserDbDAO implements UserDAO
 {
 	private static final String SELECT
-    = "SELECT user_id, first_name, last_name, school_class, school_number, date_of_registration FROM me_user ORDER BY first_name, last_name";
+    = "SELECT user_id, first_name, last_name, school_class, school_number, date_of_registration FROM me_user ORDER BY last_name;";
 	
 	/**Список пользователей*/
 	private List<User> listUser;
+	
 	
 	private ConnectionBuilder builder = ConnectionBuilderFactory.getConnectionBuilder();
     private Connection getConnection() throws SQLException 
@@ -89,4 +90,12 @@ public class UserDbDAO implements UserDAO
         }
         return user;
     }
+    
+    /**Получить список пользователей
+     * @return список пользователей*/
+	@Override
+	public List<User> getUserList() 
+	{
+		return listUser;
+	}
 }

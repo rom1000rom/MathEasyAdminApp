@@ -15,6 +15,7 @@ public class ConnectionBuilderFactory
     {
         try 
         {
+        	//Class dao = Class.forName("connection.SimpleConnectionBuilder");
             Class dao = Class.forName(GlobalConfig.getProperty("dao.connection.class"));
             return (ConnectionBuilder)dao.newInstance();
         } 

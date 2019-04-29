@@ -17,11 +17,15 @@ public class Math_easyFrame extends JFrame
 	   private final JSplitPane innerPane;
 	   /**Внешняя разделяемая панель*/
 	   private final JSplitPane outerPane;
+	   /**Список пользователей*/
+	   private final JList<String> userList;
+	   /**Панель с вкладками*/
+	   private final JTabbedPane tabbetPane;
 	   /**Менеджер по работе со списком пользователей*/
 	   private final UserManager  userManager = new  UserManager();
 	   
-	   public Math_easyFrame()
-	   {
+	   public Math_easyFrame() 
+	   {		  
 	      //Задаём размеры и положение фрейма
 	      Toolkit kit = Toolkit.getDefaultToolkit();
 	      Dimension screenSize = kit.getScreenSize();
@@ -29,26 +33,36 @@ public class Math_easyFrame extends JFrame
 	      int screenWidth = screenSize.width;
 	      setLocation(screenWidth / 4, screenHeight / 11);
 	      setSize(screenWidth / 2, screenHeight / 2);
+	       
+	      //Создаём список пользователей
+	      userList = new JList<>(new UserListModel(userManager.getUserList()));
+	      userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	      userList.setPrototypeCellValue("wwwwwwwwwwww");
+	      userList.setVisibleRowCount(14);
 	      
-	      User us = userManager.getContact((long)1);
-	      if(us != null)
+	      userList.addListSelectionListener(event ->
 	      {
-	          System.out.println(us.getLastName());
-	      }
-	      else
-	      {
-	    	  System.out.println("Пользователя с таким ID-номером нет");
-	      }
+	    	  if(event.getValueIsAdjusting())
+	    	  {
+	    	      System.out.println(userList.getSelectedValue());
+	    	  }
+	      });
+	      JScrollPane userScrollPane = new JScrollPane(userList);
 	      
-	      //Создаём разделяемы панели
-	      TextArea list = new TextArea();
-	      list.setText("Where will be list");
-	      TextArea tabPane = new TextArea();
-	      tabPane.setText("Where will be tabPane");
+	      //Создаём и заполняем панель с вкладками
+	      tabbetPane = new JTabbedPane();
+	      JPanel firstPanel = new JPanel();
+	      JPanel secondPanel = new JPanel();;
+	      JPanel thirdPanel = new JPanel();;
+	      tabbetPane.add("Общая информация", firstPanel);
+	      tabbetPane.add("Задания", secondPanel);
+	      tabbetPane.add("История входов", thirdPanel);
+	      
+	     
 	      TextArea tree = new TextArea();
 	      tree.setText("Where will be tree");
 	      
-	      innerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, list, tabPane);
+	      innerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, userScrollPane, tabbetPane);
 	      outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, innerPane, tree);
 	      add(outerPane, BorderLayout.CENTER);
 	   }
