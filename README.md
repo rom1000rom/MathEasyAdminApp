@@ -1,2 +1,2 @@
 # MathEasyAdminApp
-Desktop application for database administration and user activity monitoring.
+Desktop Java-application for database administration and user activity monitoring.
