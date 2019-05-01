@@ -1,5 +1,6 @@
 package entity;
 
+import java.util.List;
 
 /**Класс для хранения данных пользователя.
 @author Артемьев Р.А.
@@ -18,6 +19,12 @@ public class User
     private int school_number;
     /**Дата регистрации пользователя*/
     private String date_of_registration;
+    /**Список актуальных тем*/
+    private List<UserTheme> actual_theme;
+    /**Список неактуальных тем*/
+    private List<UserTheme> not_actual_theme;
+    
+    
     
     /**Конструктор без параметров*/
     public User() 
@@ -98,6 +105,26 @@ public class User
     public void setDateOfRegistration(String date_of_registration) 
     {
         this.date_of_registration = date_of_registration;
+    }
+    
+    public List<UserTheme> getActualTheme() 
+    {
+        return actual_theme;
+    }
+    
+    public void setActualTheme(List<UserTheme> actual_theme) 
+    {
+        this.actual_theme = actual_theme;
+    }
+    
+    public List<UserTheme> getNotActualTheme() 
+    {
+        return not_actual_theme;
+    }
+    
+    public void setNotActualTheme(List<UserTheme> not_actual_theme) 
+    {
+        this.not_actual_theme = not_actual_theme;
     }
     
     @Override

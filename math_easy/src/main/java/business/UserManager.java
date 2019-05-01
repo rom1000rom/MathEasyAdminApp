@@ -18,8 +18,8 @@ public class UserManager
         dao = UserDAOFactory.getUserDAO();
     }
     
-    /**Получить объект класса User по его ID
-     * @return объект класса User*/
+    /**Получить объект класса User по его ID, если такого нет, то null
+     * @return объект класса User, или null*/
     public User getUser(Long contactId) 
     {   
         return dao.getUser(contactId);       

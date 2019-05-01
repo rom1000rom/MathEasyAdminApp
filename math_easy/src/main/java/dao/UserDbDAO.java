@@ -9,6 +9,7 @@ import java.util.List;
 import connection.ConnectionBuilder;
 import connection.ConnectionBuilderFactory;
 import entity.User;
+import entity.UserTheme;
 import exception.UserDaoException;
 
 
@@ -18,9 +19,17 @@ import exception.UserDaoException;
 @version 27.04.2019 */
 public class UserDbDAO implements UserDAO
 {
+	/**SQL-команда для получения всех пользователей из базы данных*/
 	private static final String SELECT
     = "SELECT user_id, first_name, last_name, school_class, school_number, date_of_registration FROM me_user ORDER BY last_name;";
-	
+	/**SQL-команда для получения всех тем у пользователя по его ID*/
+	private static final String SELECT_USER_THEME
+	= "SELECT aa.theme_id, aa.theme_title, a.solve_task, a.actual, a.last_solved_task\r\n" + "FROM( \r\n" +  
+			"  SELECT theme_id, solve_task, actual, last_solved_task\r\n" + 
+			"  FROM me_user_theme\r\n" + 
+			"  WHERE user_id = ?\r\n" + 
+			") AS a \r\n" + 
+			"JOIN me_theme AS aa ON a.theme_id = aa.theme_id;";
 	/**Список пользователей*/
 	private List<User> listUser;
 	
@@ -34,6 +43,7 @@ public class UserDbDAO implements UserDAO
     public UserDbDAO() throws UserDaoException
     {
     	listUser = findUsers();
+    	findUsersTheme(listUser);
     }
     
     /**Метод создаёт и заполняет и возвращает экземпляр класса User.
@@ -49,6 +59,20 @@ public class UserDbDAO implements UserDAO
     	user.setSchoolNumber(rs.getInt("school_number"));
     	user.setDateOfRegistration(rs.getString("date_of_registration"));
         return user;
+    }
+    
+    /**Метод создаёт и заполняет и возвращает экземпляр класса UserTheme.
+    @param rs данные полученные из базы данных
+    @return объект класса UserTheme */
+    private UserTheme fillUserTheme(ResultSet rs) throws SQLException 
+    {
+    	UserTheme userTheme = new UserTheme();
+    	userTheme.setTheme_id(rs.getLong("theme_id"));
+    	userTheme.setTheme_title(rs.getString("theme_title"));
+    	userTheme.setSolve_task(rs.getInt("solve_task"));
+    	userTheme.setActual(rs.getBoolean("actual"));
+    	userTheme.setLast_solved_task(rs.getString("last_solved_task"));
+        return userTheme;
     }
     
     /**Метод создаёт и заполняет данными из базы данных и возвращает список экземпляров класса User.
@@ -71,6 +95,42 @@ public class UserDbDAO implements UserDAO
             throw new UserDaoException(e);
         }
         return list;
+    }
+    
+    /**Метод заполняет список пользователей данными о их текущих и пройденных темах.
+    @param listUser список пользователей*/
+    private void findUsersTheme(List<User> listUser) throws UserDaoException 
+    {
+    	for(User user : listUser)//Проходим по списку пользователей
+    	{
+    	   List<UserTheme> listActualTheme = new LinkedList<>();
+    	   List<UserTheme> listNotActualTheme = new LinkedList<>();
+           try (Connection con = getConnection();
+                PreparedStatement pst = con.prepareStatement(SELECT_USER_THEME)) 
+           {
+        	   pst.setLong(1, user.getUserId());
+               ResultSet rs = pst.executeQuery();
+               while (rs.next()) 
+               {
+            	   UserTheme us = fillUserTheme(rs);
+                   if(us.getActual())//Если задание актуально
+                   {
+                	   listActualTheme.add(us);
+                   }
+                   else//Если нет
+                   {
+                	   listNotActualTheme.add(us);
+                   }   
+               }
+              rs.close(); 
+              user.setActualTheme(listActualTheme);
+              user.setNotActualTheme(listNotActualTheme);
+           } 
+           catch (Exception e) 
+           {
+              throw new UserDaoException(e);
+           }
+    	}
     }
     
     /**Метод находит экземпляр класса User из списка по его ID(идентификационному номеру) .

@@ -91,4 +91,6 @@ CREATE TABLE me_user_theme
     ON DELETE CASCADE
 );
 INSERT INTO me_user_theme( user_id, theme_id, solve_task, actual, last_solved_task )
-VALUES ( 2, 1, 10, TRUE, null );
+VALUES ( 2, 1, 10, TRUE, null ),
+       ( 1, 1, 10, FALSE, null ),
+       ( 1, 2, 10, TRUE, null );
