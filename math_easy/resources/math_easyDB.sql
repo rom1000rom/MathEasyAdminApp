@@ -34,7 +34,8 @@ CREATE TABLE me_input_user
 );
 INSERT INTO me_input_user( input_date, user_id, tasks_solved_correctly, tasks_solved_incorrectly )
 VALUES ( '2019-04-22'::date, 1, '{ 1, 3, 5 }'::integer[], '{ 2 }'::integer[]),
-       ( '2019-04-23'::date, 2,  NULL, '{ 1, 2 }'::integer[]);
+       ( '2019-04-25'::date, 2,  '{ 1, 2 }'::integer[], NULL),
+       ( '2019-04-23'::date, 2,  NULL, '{ 1, 2, 3 }'::integer[]);
       
 CREATE TABLE me_theme
 (

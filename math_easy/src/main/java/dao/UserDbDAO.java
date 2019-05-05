@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +10,7 @@ import java.util.List;
 import connection.ConnectionBuilder;
 import connection.ConnectionBuilderFactory;
 import entity.User;
+import entity.UserInput;
 import entity.UserTheme;
 import exception.UserDaoException;
 
@@ -22,6 +24,7 @@ public class UserDbDAO implements UserDAO
 	/**SQL-команда для получения всех пользователей из базы данных*/
 	private static final String SELECT
     = "SELECT user_id, first_name, last_name, school_class, school_number, date_of_registration FROM me_user ORDER BY last_name;";
+	
 	/**SQL-команда для получения всех тем у пользователя по его ID*/
 	private static final String SELECT_USER_THEME
 	= "SELECT aa.theme_id, aa.theme_title, a.solve_task, a.actual, a.last_solved_task\r\n" + "FROM( \r\n" +  
@@ -30,6 +33,13 @@ public class UserDbDAO implements UserDAO
 			"  WHERE user_id = ?\r\n" + 
 			") AS a \r\n" + 
 			"JOIN me_theme AS aa ON a.theme_id = aa.theme_id;";
+	
+	/**SQL-команда для получения всех входов в программу у пользователя по его ID*/
+	private static final String SELECT_USER_INPUT
+	= "SELECT input_date, tasks_solved_correctly, tasks_solved_incorrectly\r\n" + 
+			"FROM me_input_user \r\n" + 
+			"WHERE user_id = ? ORDER BY input_date;";
+	
 	/**Список пользователей*/
 	private List<User> listUser;
 	
@@ -44,6 +54,7 @@ public class UserDbDAO implements UserDAO
     {
     	listUser = findUsers();
     	findUsersTheme(listUser);
+    	findUsersInput(listUser);
     }
     
     /**Метод создаёт и заполняет и возвращает экземпляр класса User.
@@ -73,6 +84,28 @@ public class UserDbDAO implements UserDAO
     	userTheme.setActual(rs.getBoolean("actual"));
     	userTheme.setLast_solved_task(rs.getString("last_solved_task"));
         return userTheme;
+    }
+    
+    /**Метод создаёт и заполняет и возвращает экземпляр класса UserInput.
+    @param rs данные полученные из базы данных
+    @return объект класса UserInput */
+    private UserInput fillUserInput(ResultSet rs) throws SQLException 
+    {
+    	UserInput userInput = new UserInput();
+    	userInput.setInputDate(rs.getString("input_date"));
+    	Array arrayCor = rs.getArray("tasks_solved_correctly");//Получаю массив данных
+    	if(arrayCor != null)
+    	{
+    		userInput.setTasksSolvedCorrectly((Integer[])arrayCor.getArray());  	    
+    	}		
+    	
+    	Array arrayInCor = rs.getArray("tasks_solved_incorrectly");//Получаю массив данных
+    	if(arrayInCor != null)
+    	{
+    		userInput.setTasksSolvedInCorrectly((Integer[])arrayInCor.getArray());  	    
+    	}	   	
+  	
+        return userInput;
     }
     
     /**Метод создаёт и заполняет данными из базы данных и возвращает список экземпляров класса User.
@@ -158,4 +191,32 @@ public class UserDbDAO implements UserDAO
 	{
 		return listUser;
 	}
+	
+	/**Метод заполняет список пользователей данными о их водах в программу.
+    @param listUser список пользователей*/
+    private void findUsersInput(List<User> listUser) throws UserDaoException 
+    {
+    	for(User user : listUser)//Проходим по списку пользователей
+    	{
+    	   List<UserInput> listInput = new LinkedList<>();
+    
+           try (Connection con = getConnection();
+                PreparedStatement pst = con.prepareStatement(SELECT_USER_INPUT)) 
+           {
+        	   pst.setLong(1, user.getUserId());
+               ResultSet rs = pst.executeQuery();
+               while (rs.next()) 
+               {
+            	   UserInput us = fillUserInput(rs);                 
+            	   listInput.add(us);                   
+               }
+              rs.close(); 
+              user.setUserInput(listInput);            
+           } 
+           catch (Exception e) 
+           {
+              throw new UserDaoException(e);
+           }
+    	}
+    }
 }

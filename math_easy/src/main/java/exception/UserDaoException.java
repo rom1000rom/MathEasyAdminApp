@@ -1,6 +1,6 @@
 package exception;
 
-/**Класс исключения, возникающего при работе класса UserDAO.
+/**Класс исключения, возникающего при работе типа UserDAO.
 @author Артемьев Р.А.
 @version 27.04.2019 */
 public class UserDaoException extends Exception

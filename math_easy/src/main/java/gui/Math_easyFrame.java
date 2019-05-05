@@ -2,11 +2,14 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.table.*;
+
+import business.ThemeManager;
 import business.UserManager;
 import entity.User;
 import entity.UserTheme;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**Класс представляет основной фрейм приложения.
@@ -31,12 +34,18 @@ public class Math_easyFrame extends JFrame
 	   private final  JPanel secondPanel = new JPanel();
 	   /**Панель для отображения истории входов пользователя*/
 	   private final  JPanel thirdPanel = new JPanel();
+	   /**Панель для отображения дерева тем, подтем и заданий*/
+	   private final  JPanel treePanel = new JPanel();
+	   /**Менеджер по работе со списком тем*/
+	   private final ThemeManager  themeManager = new  ThemeManager();
 	   /**Менеджер по работе со списком пользователей*/
 	   private final UserManager  userManager = new  UserManager();
 	   /**Таблица актуальных тем*/
 	   private static final JTable  actualThemeTable = new JTable();
 	   /**Таблица пройденных тем*/
 	   private static final JTable  notActualThemeTable = new JTable();
+	   /**Таблица входов пользователя в программу*/
+	   private static final JTable  userInputTable = new JTable();
 	   
 	   public Math_easyFrame() 
 	   {		  
@@ -64,6 +73,7 @@ public class Math_easyFrame extends JFrame
 	    	      tabbetPane.updateUI();
 	    	      actualThemeTable.setModel(new ActualThemeTableModel(us.getActualTheme()));
 	    	      notActualThemeTable.setModel(new NotActualThemeTableModel(us.getNotActualTheme()));
+	    	      userInputTable.setModel(new InputTableModel(us.getUserInput()));
 	    	  }
 	      });
 	      JScrollPane userScrollPane = new JScrollPane(userJList);
@@ -76,13 +86,15 @@ public class Math_easyFrame extends JFrame
 	      //Заполняем  панель с актуальными и пройденными темами
 	      fillUserThemePanel(secondPanel);
 	      
+	      //Заполняем  панель с входами пользователя в программу
+	      fillUserInputPanel(thirdPanel);
 	      
-	      TextArea tree = new TextArea();
-	      tree.setText("Where will be tree");
+	      //Заполняем  панель с деревом тем, подтем и заданий
+	      fillTreePanel(treePanel);	            
 	      
 	      //Создаём и заполняем разделяемые панели
 	      innerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, userScrollPane, tabbetPane);
-	      outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, innerPane, tree);
+	      outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, innerPane, treePanel);
 	      outerPane.setDividerLocation(screenHeight / 5);//Задаём положение разделителя
 	      add(outerPane, BorderLayout.CENTER);
 	   }
@@ -172,5 +184,45 @@ public class Math_easyFrame extends JFrame
 		      buttonPanel.add(deleteButton);
 		      userThemePanel.add(buttonPanel, BorderLayout.SOUTH);		      
 	   }
+
+	   /**Метод заполняет панель полученную в качестве параметра информацией
+	    * о входах пользователя в программу.
+	    @param userInputPanel панель с информацией о входах пользователя в программу */
+	   private static void fillUserInputPanel(JPanel userInputPanel)
+	   {	 
+		   userInputPanel.setLayout(new BorderLayout());
+		   
+		   //Создаём метку для таблицы входов пользователя в программу
+		   JLabel inputLabel = new JLabel("Входы пользователя");
+		   inputLabel.setFont(new Font(null, Font.BOLD, 14));
+		   inputLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
+		   userInputPanel.add(inputLabel, BorderLayout.NORTH);
+		   
+		   //Задаём параметры таблицы входов пользователя в программу
+		   JScrollPane userInputScrollPane = new JScrollPane(userInputTable);
+		   userInputTable.setRowHeight(ROW_HEIGHT); 
+		   userInputTable.setFont(new Font(null, Font.BOLD, 12));
+		   userInputTable.getTableHeader().setFont(new Font(null, Font.BOLD, 12));
+		   userInputPanel.add(userInputScrollPane, BorderLayout.CENTER);
+		   
+		   //Создаём и заполняем панель с кнопками
+		   JPanel buttonPanel = new JPanel();
+		   JButton viewButton = new JButton("Просмотреть задания");
+		   //Регистрируем обработчик для событий кнопки addButton
+		   viewButton.addActionListener(event ->
+		   {});		   
+		   buttonPanel.add(viewButton);		   
+		   userInputPanel.add(buttonPanel, BorderLayout.SOUTH);	
+	   }
 	   
+	   /**Метод заполняет панель полученную в качестве параметра деревом тем, подтем и
+	    * заданий.
+	    @param treePanel панель с информацией о темах, подтемах и заданиях */
+	   private static void fillTreePanel(JPanel treePanel)
+	   {	
+		   treePanel.setLayout(new BorderLayout());
+		   TextArea tree = new TextArea();
+		   tree.setText("Where will be tree");
+		   treePanel.add(tree, BorderLayout.CENTER);
+	   }
 }

@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.List;
+
 /**Класс для хранения данных о входе пользователя в программу.
 @author Артемьев Р.А.
 @version 03.05.2019 */
@@ -8,9 +10,9 @@ public class UserInput
     /**Дата входа*/
     private String inputDate;
     /**Заданий решено правильно*/
-    private int[] tasksSolvedCorrectly;
+    private Integer[] tasksSolvedCorrectly;
     /**Заданий решено неправильно*/
-    private int[] tasksSolvedInCorrectly;
+    private Integer[] tasksSolvedInCorrectly;
    
     
     /**Конструктор без параметров*/
@@ -22,7 +24,7 @@ public class UserInput
     @param tasksSolvedCorrectly заданий решено правильно
     @param tasksSolvedInCorrectly заданий решено неправильно
     */
-    public UserInput(String inputDate, int[] tasksSolvedCorrectly, int[] tasksSolvedInCorrectly) 
+    public UserInput(String inputDate, Integer[] tasksSolvedCorrectly, Integer[] tasksSolvedInCorrectly) 
     {
         this.inputDate = inputDate;
         this.tasksSolvedCorrectly = tasksSolvedCorrectly;
@@ -39,22 +41,22 @@ public class UserInput
         this.inputDate = inputDate;
     }
 
-    public int[] getTasksSolvedCorrectly() 
+    public Integer[] getTasksSolvedCorrectly() 
     {
         return tasksSolvedCorrectly;
     }
 
-    public void setTasksSolvedCorrectly(int[] tasksSolvedCorrectly) 
+    public void setTasksSolvedCorrectly(Integer[] tasksSolvedCorrectly) 
     {
         this.tasksSolvedCorrectly = tasksSolvedCorrectly;
     }
     
-    public int[] getTasksSolvedInCorrectly() 
+    public Integer[] getTasksSolvedInCorrectly() 
     {
         return tasksSolvedInCorrectly;
     }
 
-    public void setTasksSolvedInCorrectly(int[] tasksSolvedInCorrectly) 
+    public void setTasksSolvedInCorrectly(Integer[] tasksSolvedInCorrectly) 
     {
         this.tasksSolvedInCorrectly = tasksSolvedInCorrectly;
     }

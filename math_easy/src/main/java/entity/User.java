@@ -23,6 +23,8 @@ public class User
     private List<UserTheme> actual_theme;
     /**Список неактуальных тем*/
     private List<UserTheme> not_actual_theme;
+    /**Список входов пользователя в программу*/
+    private List<UserInput> userInput;
     
     
     
@@ -125,6 +127,16 @@ public class User
     public void setNotActualTheme(List<UserTheme> not_actual_theme) 
     {
         this.not_actual_theme = not_actual_theme;
+    }
+    
+    public List<UserInput> getUserInput() 
+    {
+        return userInput;
+    }
+    
+    public void setUserInput(List<UserInput> userInput) 
+    {
+        this.userInput = userInput;
     }
     
     @Override
