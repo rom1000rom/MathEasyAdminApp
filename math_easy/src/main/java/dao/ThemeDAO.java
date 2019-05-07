@@ -1,9 +1,10 @@
 package dao;
 
 import java.util.List;
+import java.util.Map;
+import entity.Task;
 import entity.Theme;
-import entity.User;
-import exception.UserDaoException;
+
 
 /**Интерфейс служит для определения функций хранилища данных о темах.
 @author Артемьев Р.А.
@@ -14,4 +15,7 @@ public interface ThemeDAO
     public Theme getTheme(Long id);
     /**Получить список тем*/
     public List<Theme> getThemeList();
+    /**Получить отображение списка заданий*/
+    public Map<Long, Task> getTaskMap();
+    
 }

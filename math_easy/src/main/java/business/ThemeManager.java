@@ -1,8 +1,10 @@
 package business;
 
 import java.util.List;
+import java.util.Map;
 
 import dao.*;
+import entity.Task;
 import entity.Theme;
 import entity.User;
 import exception.UserBusinessException;
@@ -31,5 +33,11 @@ public class ThemeManager
 	public List<Theme> getThemeList() 
 	{
 		return dao.getThemeList();
+	}
+	
+	/**Получить отображение списка заданий*/
+	public Map<Long, Task> getTaskMap() 
+	{	
+		return dao.getTaskMap();
 	}
 }

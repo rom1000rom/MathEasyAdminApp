@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.List;
+
 /**Класс для хранения данных темы.
 @author Артемьев Р.А.
 @version 24.04.2019 */
@@ -11,6 +13,9 @@ public class Theme
     private String theme_title;
     /**Краткая теоретическая справка*/
     private String brief_theoretical_information;
+    /**Список подтем*/
+    private List<Subtheme> listSubtheme;
+    
     
     /**Конструктор без параметров*/
     public Theme() 
@@ -55,6 +60,16 @@ public class Theme
     public void setBrief_theoretical_information(String brief_theoretical_information) 
     {
         this.brief_theoretical_information = brief_theoretical_information;
+    }
+    
+    public List<Subtheme> getSubtheme() 
+    {
+        return listSubtheme;
+    }
+
+    public void setSubtheme(List<Subtheme> listSubtheme) 
+    {
+        this.listSubtheme = listSubtheme;
     }
     
     @Override

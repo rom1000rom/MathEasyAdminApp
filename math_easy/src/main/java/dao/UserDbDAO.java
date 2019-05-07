@@ -52,9 +52,9 @@ public class UserDbDAO implements UserDAO
     
     public UserDbDAO() throws UserDaoException
     {
-    	listUser = findUsers();
-    	findUsersTheme(listUser);
-    	findUsersInput(listUser);
+    	listUser = findUsers();//Получаем список пользователей
+    	findUsersTheme(listUser);//Получаем для каждого пользователя список текущих и пройденных тем
+    	findUsersInput(listUser);//Получаем для каждого пользователя список его входов в программу
     }
     
     /**Метод создаёт и заполняет и возвращает экземпляр класса User.

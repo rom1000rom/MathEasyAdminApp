@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.List;
+
 /**Класс для хранения данных подтемы.
 @author Артемьев Р.А.
 @version 24.04.2019 */
@@ -11,6 +13,8 @@ public class Subtheme
     private Long theme_id;
     /**Название подтемы*/
     private String subtheme_title;
+    /**Список заданий*/
+    private List<Task> listTask;
     
     /**Конструктор без параметров*/
     public Subtheme() 
@@ -57,6 +61,16 @@ public class Subtheme
         this.subtheme_title = subtheme_title;
     }
 
+    public List<Task> getTask() 
+    {
+        return listTask;
+    }
+
+    public void setTask(List<Task> listTask) 
+    {
+        this.listTask = listTask;
+    }
+    
     @Override
     public String toString() 
     {
