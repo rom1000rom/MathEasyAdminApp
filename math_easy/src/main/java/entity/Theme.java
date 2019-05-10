@@ -75,8 +75,6 @@ public class Theme
     @Override
     public String toString() 
     {
-        return "Theme({" + "theme_id=" + theme_id + 
-                ", theme_title=" + theme_title + 
-                ", brief_theoretical_information=" + brief_theoretical_information + '}';
+        return theme_title;
     }
 }

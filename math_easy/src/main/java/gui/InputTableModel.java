@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import entity.User;
@@ -49,7 +50,7 @@ public class InputTableModel extends AbstractTableModel
                 return userIn.getInputDate();
             case 1:
             	Integer[] arrCor = userIn.getTasksSolvedCorrectly();
-            	String strCor = new String("");
+            	String strCor = new String("");           	
             	if(arrCor != null)
             	{
             		for(int i = 0; i < arrCor.length; i++)          	
@@ -57,7 +58,7 @@ public class InputTableModel extends AbstractTableModel
             		   strCor = strCor + (arrCor[i] + " ");
             	    }
             	}
-                return strCor;
+                return  strCor;
             case 2:
             	Integer[] arrInCor = userIn.getTasksSolvedInCorrectly();
             	String strInCor = new String("");

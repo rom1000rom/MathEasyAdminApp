@@ -74,7 +74,9 @@ CREATE TABLE me_task
     ON DELETE CASCADE 
 );
 INSERT INTO me_task( subtheme_id, description, answer )
-VALUES ( 2, 'Чему равен синус угла 90 градусов?', '0' );
+VALUES ( 2, 'Чему равен синус угла 90 градусов?', '0' ), 
+       ( 2, 'Чему равен арксинус 0?', '0' ),
+       ( 1, 'Чему равен косинус 60 градусов?', '1/2' );
 
 CREATE TABLE me_user_theme
 (

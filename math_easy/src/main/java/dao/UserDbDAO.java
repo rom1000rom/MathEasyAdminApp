@@ -40,6 +40,10 @@ public class UserDbDAO implements UserDAO
 			"FROM me_input_user \r\n" + 
 			"WHERE user_id = ? ORDER BY input_date;";
 	
+	/**SQL-команда для удаления актуальной темы у пользователя*/
+	private static final String DELETE_USER_THEME
+    = "DELETE FROM me_user_theme WHERE user_id=? AND theme_id=? AND actual=TRUE";
+	
 	/**Список пользователей*/
 	private List<User> listUser;
 	
@@ -219,4 +223,25 @@ public class UserDbDAO implements UserDAO
            }
     	}
     }
+    /**Удалить актуальную тему у пользователя
+     *  @param userId идентификационный номер пользователя
+        @param themeId идентификационный номер темы**/
+	@Override
+	public void deleteUserTheme(Long userId, Long themeId) throws UserDaoException 
+	{	
+	        try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(DELETE_USER_THEME)) 
+	        {
+	            pst.setLong(1, userId);
+	            pst.setLong(2, themeId);
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new UserDaoException(e);
+	        }
+	        findUsersTheme(listUser);//Получаем для каждого пользователя список текущих и пройденных тем
+	}
+		
+	
 }

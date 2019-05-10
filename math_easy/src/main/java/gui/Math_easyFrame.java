@@ -10,10 +10,13 @@ import entity.Task;
 import entity.Theme;
 import entity.User;
 import entity.UserTheme;
+import exception.UserDaoException;
 
 import java.awt.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**Класс представляет основной фрейм приложения.
 @author Артемьев Р.А.
@@ -29,8 +32,10 @@ public class Math_easyFrame extends JFrame
 	   private final JSplitPane  southInnerPane;
 	   /**Внешняя разделяемая панель*/
 	   private final JSplitPane outerPane;
+	   /**Список пользователей(ГПИ)*/
+	   private static JList<String> userJList;
 	   /**Список пользователей*/
-	   private final JList<String> userJList;
+	   private static List<User> listUser;
 	   /**Панель с вкладками*/
 	   private final JTabbedPane tabbetPane = new JTabbedPane();
 	   /**Панель для отображения общих данных о пользователе*/
@@ -46,7 +51,7 @@ public class Math_easyFrame extends JFrame
 	   /**Менеджер по работе со списком тем*/
 	   private final ThemeManager  themeManager = new  ThemeManager();
 	   /**Менеджер по работе со списком пользователей*/
-	   private final UserManager  userManager = new  UserManager();
+	   private static final UserManager  userManager = new  UserManager();
 	   /**Таблица актуальных тем*/
 	   private static final JTable  actualThemeTable = new JTable();
 	   /**Таблица пройденных тем*/
@@ -62,16 +67,16 @@ public class Math_easyFrame extends JFrame
 	      //Задаём размеры и положение фрейма
 	      Toolkit kit = Toolkit.getDefaultToolkit();
 	      Dimension screenSize = kit.getScreenSize();
-	      int screenHeight = screenSize.height + (screenSize.height/2);
+	      int screenHeight = screenSize.height + (screenSize.height/4);
 	      int screenWidth = screenSize.width;
 	      setLocation(screenWidth / 4, screenHeight / 11);
 	      setSize(screenWidth / 2, screenHeight / 2);
 	       
 	      //Создаём список пользователей
-	      List<User> listUser = userManager.getUserList();
+	      listUser = userManager.getUserList();
 	      userJList = new JList<>(new UserListModel(listUser));
 	      userJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	      userJList.setFont(new Font(null, Font.BOLD, 12));
+	      userJList.setFont(new Font(null, Font.BOLD, 13));
 	      userJList.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 	      userJList.setPrototypeCellValue("wwwwwwwwwwww");
 	      userJList.setVisibleRowCount(20);
@@ -99,7 +104,7 @@ public class Math_easyFrame extends JFrame
 	      fillUserThemePanel(secondPanel);
 	      
 	      //Заполняем  панель с входами пользователя в программу
-	      fillUserInputPanel(thirdPanel);
+	      fillUserInputPanel(thirdPanel, themeManager.getTaskMap());
 	      
 	      
 	      //Заполняем  панель с деревом тем, подтем и заданий
@@ -113,7 +118,7 @@ public class Math_easyFrame extends JFrame
 	      southInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treePanel, taskDescriptionPanel);
 	      
 	      outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,  northInnerPane, southInnerPane);
-	      outerPane.setDividerLocation(screenHeight / 5);//Задаём положение разделителя
+	      outerPane.setDividerLocation(screenHeight / 4);//Задаём положение разделителя
 	      add(outerPane, BorderLayout.CENTER);
 	   }
 	   
@@ -197,7 +202,25 @@ public class Math_easyFrame extends JFrame
 		      JButton deleteButton = new JButton("Удалить тему");
 			  //Регистрируем обработчик для событий кнопки deleteButton
 		      deleteButton.addActionListener(event ->
-			   {});
+			   {
+				   int row =  actualThemeTable.getSelectedRow();
+				   if(row >= 0)
+				   {
+					   //Получаем id темы, которую нужно удалить
+				       Long themeId = (Long)actualThemeTable.getModel().getValueAt(row, 0);
+				       //Получаем id пользователя
+				       Long userId = listUser.get(userJList.getSelectedIndex()).getUserId();				     
+					   userManager.deleteUserTheme(userId, themeId);//Удаляем тему из базы данных				  
+				       listUser = userManager.getUserList();
+				       User us = userManager.getUser(userId);	
+				       //Загружаем в таблицу обновлённую модель
+			    	   actualThemeTable.setModel(new ActualThemeTableModel(us.getActualTheme()));
+				   }
+				   else
+				   {				
+				      JOptionPane.showMessageDialog(null, "Выделите строку с актуальной темой");
+				   }	
+			   });
 		      buttonPanel.add(addButton);
 		      buttonPanel.add(deleteButton);
 		      userThemePanel.add(buttonPanel, BorderLayout.SOUTH);		      
@@ -206,7 +229,7 @@ public class Math_easyFrame extends JFrame
 	   /**Метод заполняет панель полученную в качестве параметра информацией
 	    * о входах пользователя в программу.
 	    @param userInputPanel панель с информацией о входах пользователя в программу */
-	   private static void fillUserInputPanel(JPanel userInputPanel)
+	   private static void fillUserInputPanel(JPanel userInputPanel, Map<Long,Task> taskMap)
 	   {	 
 		   userInputPanel.setLayout(new BorderLayout());
 		   
@@ -226,9 +249,48 @@ public class Math_easyFrame extends JFrame
 		   //Создаём и заполняем панель с кнопками
 		   JPanel buttonPanel = new JPanel();
 		   JButton viewButton = new JButton("Просмотреть задания");
-		   //Регистрируем обработчик для событий кнопки addButton
+		   //Регистрируем обработчик для событий кнопки viewButton
 		   viewButton.addActionListener(event ->
-		   {});		   
+		   {
+			   List<Task> list = new ArrayList<>();	
+			   int row = userInputTable.getSelectedRow();
+			   int column = userInputTable.getSelectedColumn();
+			   if((row >= 0)&&(column > 0))
+			   {
+			       String str;	
+			       List<String> arrayStr = new ArrayList<>();
+				   str = (String)userInputTable.getModel().getValueAt(row, column);//Получаем строку из выделенной ячейки
+				   int from = 0;
+				   int to = str.indexOf(" ");
+				   while(from < str.length())
+				   {
+					    String s = str.substring(from, to);//Получаем подстроку с очередным числом					   
+				        arrayStr.add(s);//Добавляем полученную подстроку в списочный массив
+				        from = to + 1;
+				        to = str.indexOf(" ", from);
+				   }
+				   for(String s : arrayStr)
+				   {	
+					   Long l = Long.parseLong(s);//Получаем из подстроки число
+					   if(taskMap.containsKey(l))//Если хешь-отображение содержит такой ключ
+					   {
+					       list.add(taskMap.get(l));//Получаем задание по его ключу
+					   }
+				   }
+				   if(!list.isEmpty())
+				   {
+				       new TaskDialogPane(list);
+				   }
+				   else
+				   {
+					   JOptionPane.showMessageDialog(null, "Ячейка пуста");
+				   }
+			   }
+			   else
+			   {				
+			      JOptionPane.showMessageDialog(null, "Выделите ячейку со списком заданий");
+			   }	   	   				   
+		   });		   
 		   buttonPanel.add(viewButton);		   
 		   userInputPanel.add(buttonPanel, BorderLayout.SOUTH);	
 	   }
@@ -246,7 +308,7 @@ public class Math_easyFrame extends JFrame
 		   DefaultMutableTreeNode task;//Переменная для узлов с заданиями
 		   for(Theme th : listTheme)
 		   {
-			   theme = new DefaultMutableTreeNode(th.getTheme_title());
+			   theme = new DefaultMutableTreeNode(th);
 			   theme.setAllowsChildren(true);
 			   root.add(theme);
 			   for(Subtheme s : th.getSubtheme())
@@ -264,11 +326,11 @@ public class Math_easyFrame extends JFrame
 		   }
 		   //Создаём дерево и регистрируем обработчик выбора его узлов
 		   tree = new JTree(root, true);
-		   tree.setFont(new Font(null, Font.BOLD, 12));
-		   tree.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		   tree.setFont(new Font(null, Font.BOLD, 13));
+		   tree.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		   int mode = TreeSelectionModel.SINGLE_TREE_SELECTION;
 		   tree.getSelectionModel().setSelectionMode(mode);//Выбрать можно только один узел
-		   tree.addTreeSelectionListener(event ->
+		   tree.addTreeSelectionListener(event -> 
 		   {
 			   TreePath path = tree.getSelectionPath();//Получаем путь к выбранному узлу дерева
 			   if(path == null) 
@@ -276,10 +338,20 @@ public class Math_easyFrame extends JFrame
 				   return;
 			   }
 			   DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+			   //Если выбран узел с заданием(без потомков)
 			   if(!selectionNode.getAllowsChildren())
 			   {			       
 			       fillTaskInformationPanel(taskDescriptionPanel, (Task)selectionNode.getUserObject());			       
 			       taskDescriptionPanel.updateUI(); 
+			   }
+			   //Если выбран узел с темой(его предок - корень)
+			   if(selectionNode.getParent() != null)
+			   {
+			      if(selectionNode.getParent().getParent() == null)
+			      {			       
+				     fillThemeInformationPanel(taskDescriptionPanel, (Theme)selectionNode.getUserObject());
+				     taskDescriptionPanel.updateUI(); 
+			      }
 			   }
 		   });
 		   
@@ -310,26 +382,42 @@ public class Math_easyFrame extends JFrame
 	   /**Метод очищает и заполняет панель с описанием задания, полученную в качестве первого параметра,
 	    *  данными задания, полученного в качестве второго параметра.
 	    @param panel панель 
-	    @param user пользователь*/
+	    @param task задание*/
 	   private static void fillTaskInformationPanel(JPanel panel, Task task)
 	   {
 		   panel.removeAll();//Очищаем панель
 		   panel.setLayout(new BorderLayout());
-		 //Выводим номер задания
-		   JLabel taskId = new JLabel("Задание№ " + task.getTaskId(), JLabel.LEFT);	
-		   taskId.setFont(new Font(null, Font.BOLD, 14));
-		   taskId.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));		   		   
-		   panel.add(taskId, BorderLayout.NORTH);
-		 //Выводим описание задания
-		   JLabel description = new JLabel("Описание задания:  " + task.getDescription(), JLabel.LEFT);	
-		   description.setFont(new Font(null, Font.BOLD, 14));
-		   description.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));		   	   
-		   panel.add(description, BorderLayout.CENTER);
-		 //Выводим ответ
-		   JLabel answer = new JLabel("Ответ:  " + task.getAnswer(), JLabel.LEFT);	
-		   answer.setFont(new Font(null, Font.BOLD, 14));
-		   answer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));		   	   
-		   panel.add(answer, BorderLayout.SOUTH);		 
+		   //Выводим информацию о задании
+		   JTextArea textAria = new  JTextArea();
+		   textAria.setEditable(false);
+		   textAria.setLineWrap(true);
+		   textAria.setText("Задание№ " + task.getTaskId()  + "\n\n" +
+				   "Описание задания: \n" + task.getDescription() + "\n\n" +
+				   "Ответ: " + task.getAnswer());		   	   
+		   JScrollPane taskDescriptionScrollPane = new JScrollPane(textAria);
+		   textAria.setFont(new Font(null, Font.BOLD, 13));
+		   textAria.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));		   		   
+		   panel.add(taskDescriptionScrollPane, BorderLayout.NORTH);
 	   }
 	   
+
+	   /**Метод очищает и заполняет панель с краткой теоретической информации о теме, 
+	    * полученной в качестве второго параметра.	    
+	    @param panel панель 
+	    @param theme тема*/
+	   private static void fillThemeInformationPanel(JPanel panel, Theme theme)
+	   {
+		   panel.removeAll();//Очищаем панель
+		   panel.setLayout(new BorderLayout());
+		   //Выводим краткую теоретическую информацию о теме
+		   JTextArea textAria = new  JTextArea();
+		   textAria.setEditable(false);
+		   textAria.setLineWrap(true);
+		   textAria.setText("Тема: " + theme.getTheme_title()  + "\n\n" +
+				   "Краткая теоретическая информация: \n\r" + theme.getBrief_theoretical_information());		   	   
+		   JScrollPane taskDescriptionScrollPane = new JScrollPane(textAria);
+		   textAria.setFont(new Font(null, Font.BOLD, 13));
+		   textAria.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));		   		   
+		   panel.add(taskDescriptionScrollPane, BorderLayout.NORTH);
+	   }
 }

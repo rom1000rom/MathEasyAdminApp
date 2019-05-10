@@ -14,4 +14,7 @@ public interface UserDAO
     public User getUser(Long id);
     /**Получить список пользователей*/
     public List<User> getUserList();
+    /**Удалить актуальную тему у пользователя*/
+    public void deleteUserTheme(Long userId, Long themeId) throws UserDaoException;
+    
 }
