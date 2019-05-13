@@ -36,7 +36,7 @@ public class TaskDialogPane extends JDialog
 	      Dimension screenSize = kit.getScreenSize();
 	      int screenHeight = screenSize.height + (screenSize.height/2);
 	      int screenWidth = screenSize.width;	     
-	      setSize(screenWidth / 3, screenHeight / 4);
+	      setSize(screenWidth / 4, screenHeight / 4);
 	      setLocation(screenWidth / 3, screenHeight / 6);
 	      setTitle("Список заданий");	      
         // Запрещаем изменение размеров

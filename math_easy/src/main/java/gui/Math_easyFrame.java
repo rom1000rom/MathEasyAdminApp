@@ -49,7 +49,7 @@ public class Math_easyFrame extends JFrame
 	   /**Панель для отображения выбранного задания*/
 	   private static final  JPanel taskDescriptionPanel = new JPanel();
 	   /**Менеджер по работе со списком тем*/
-	   private final ThemeManager  themeManager = new  ThemeManager();
+	   private static final ThemeManager  themeManager = new  ThemeManager();
 	   /**Менеджер по работе со списком пользователей*/
 	   private static final UserManager  userManager = new  UserManager();
 	   /**Таблица актуальных тем*/
@@ -105,14 +105,10 @@ public class Math_easyFrame extends JFrame
 	      
 	      //Заполняем  панель с входами пользователя в программу
 	      fillUserInputPanel(thirdPanel, themeManager.getTaskMap());
-	      
-	      
+	      	      
 	      //Заполняем  панель с деревом тем, подтем и заданий
 	      fillTreePanel(treePanel, themeManager.getThemeList());
-	      
-	      
-	      
-	      
+	      	          	      
 	      //Создаём и заполняем разделяемые панели
 	      northInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, userScrollPane, tabbetPane);
 	      southInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treePanel, taskDescriptionPanel);
@@ -195,10 +191,73 @@ public class Math_easyFrame extends JFrame
 		      
 		      //Создаём и заполняем панель с кнопками
 		      JPanel buttonPanel = new JPanel();
+		      
 		      JButton addButton = new JButton("Добавить тему");
 			  //Регистрируем обработчик для событий кнопки addButton
 		      addButton.addActionListener(event ->
-			   {});
+			   {
+				   int row = userJList.getSelectedIndex();
+				   TreePath path = tree.getSelectionPath();//Получаем путь к выбранному узлу дерева
+				   if(path == null) 
+				   {   
+					   JOptionPane.showMessageDialog(null, "Выделите строку с именем пользователя и названием темы"
+							   , " ", JOptionPane.WARNING_MESSAGE);
+					   return;
+				   }
+				   DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+				   //Если выбран узел с темой(его предок - корень)
+				   if(selectionNode.getParent() != null)
+				   {
+				      if((selectionNode.getParent().getParent() == null)&&(row >= 0))
+				      {			       
+				    	  User user = listUser.get(row);//Пользователь, которому нужно добавить тему
+				    	  Theme theme =  (Theme)selectionNode.getUserObject();//Тема, которую нужно добавить
+				    	  Boolean f = true;
+				    	  for(UserTheme t : user.getActualTheme())//Проверяем, не присутствует ли эта тема у пользователя
+				    	  {
+				    		  if(t.getTheme_id() ==  theme.getTheme_id())
+				    		  {
+				    			  f = false;
+				    		  }
+				    	  }
+				    	  if(f)
+				    	  {  				    		  
+				    		  String str = JOptionPane.showInputDialog(null,"Введите количество заданий", 
+				    				  "", JOptionPane.QUESTION_MESSAGE);				    		 
+				    		  int count = 0;
+				    		  try
+				    		  {
+				    		      count = Integer.parseInt(str);
+				    		  }
+				    		  catch(NumberFormatException e)
+				    		  {
+				    			  JOptionPane.showMessageDialog(null, "Введите число", " ", JOptionPane.WARNING_MESSAGE);
+				    			  return;
+				    		  }
+				    	      userManager.addUserTheme(user.getUserId(), theme.getTheme_id(), count);//Добавляем тему пользователю
+				    	      listUser = userManager.getUserList();
+					          User us = userManager.getUser(user.getUserId());	
+					          //Загружаем в таблицу обновлённую модель
+				    	      actualThemeTable.setModel(new ActualThemeTableModel(us.getActualTheme()));
+				    	  }
+				    	  else
+				    	  {
+				    		  JOptionPane.showMessageDialog(null, "Данная тема уже добавлена", " ", JOptionPane.WARNING_MESSAGE);
+				    	  }
+				      }
+				      else
+				      {
+				    	  JOptionPane.showMessageDialog(null, "Выделите строку с именем пользователя и названием темы",
+				    			  " ", JOptionPane.WARNING_MESSAGE);
+				      }
+				   }
+				   else
+				   {
+				       JOptionPane.showMessageDialog(null, "Выделите строку с именем пользователя и названием темы"
+				    		   , " ", JOptionPane.WARNING_MESSAGE);
+				   }				  				   
+			   });
+		      
 		      JButton deleteButton = new JButton("Удалить тему");
 			  //Регистрируем обработчик для событий кнопки deleteButton
 		      deleteButton.addActionListener(event ->
@@ -218,7 +277,8 @@ public class Math_easyFrame extends JFrame
 				   }
 				   else
 				   {				
-				      JOptionPane.showMessageDialog(null, "Выделите строку с актуальной темой");
+				      JOptionPane.showMessageDialog(null, "Выделите строку с актуальной темой"
+				    		  , " ", JOptionPane.WARNING_MESSAGE);
 				   }	
 			   });
 		      buttonPanel.add(addButton);
@@ -313,7 +373,7 @@ public class Math_easyFrame extends JFrame
 			   root.add(theme);
 			   for(Subtheme s : th.getSubtheme())
 			   {
-				   subtheme = new DefaultMutableTreeNode(s.getSubtheme_title());
+				   subtheme = new DefaultMutableTreeNode(s);
 				   subtheme.setAllowsChildren(true);
 				   theme.add(subtheme);
 				   for(Task ta : s.getTask())
@@ -324,6 +384,7 @@ public class Math_easyFrame extends JFrame
 				   }
 			   }
 		   }
+		   
 		   //Создаём дерево и регистрируем обработчик выбора его узлов
 		   tree = new JTree(root, true);
 		   tree.setFont(new Font(null, Font.BOLD, 13));
@@ -338,21 +399,33 @@ public class Math_easyFrame extends JFrame
 				   return;
 			   }
 			   DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)path.getLastPathComponent();
-			   //Если выбран узел с заданием(без потомков)
+			   
+			   //Если выбран узел с темой(его предок - корень)
+			   if(selectionNode.getParent() != null)
+			   {				  
+			      if(selectionNode.getParent().getParent() == null)
+			      {		
+			    	 chooseVisibleJPopupMenu(tree, true, true, true);//Задаём видимость пунктов контекстного меню			    	   
+				     fillThemeInformationPanel(taskDescriptionPanel, (Theme)selectionNode.getUserObject());
+				     taskDescriptionPanel.updateUI(); 
+			      }	
+			      else//Если выбран узел с подтемой
+			      {
+			    	 chooseVisibleJPopupMenu(tree, true, true, true);//Задаём видимость пунктов контекстного меню		    	   
+			      }
+			   }
+			   else//Если был выбран корень дерева
+			   {
+				   chooseVisibleJPopupMenu(tree, true, false, false);//Задаём видимость пунктов контекстного меню				   
+			   }
+			 //Если выбран узел с заданием(без потомков)
 			   if(!selectionNode.getAllowsChildren())
-			   {			       
+			   {	
+				   chooseVisibleJPopupMenu(tree, false, true, true);//Задаём видимость пунктов контекстного меню				   
 			       fillTaskInformationPanel(taskDescriptionPanel, (Task)selectionNode.getUserObject());			       
 			       taskDescriptionPanel.updateUI(); 
 			   }
-			   //Если выбран узел с темой(его предок - корень)
-			   if(selectionNode.getParent() != null)
-			   {
-			      if(selectionNode.getParent().getParent() == null)
-			      {			       
-				     fillThemeInformationPanel(taskDescriptionPanel, (Theme)selectionNode.getUserObject());
-				     taskDescriptionPanel.updateUI(); 
-			      }
-			   }
+			   
 		   });
 		   
 		   JScrollPane treeScrollPane = new JScrollPane(tree);
@@ -361,22 +434,44 @@ public class Math_easyFrame extends JFrame
 		   
 		   //Создаём всплывающее меню
 		   JPopupMenu popup = new JPopupMenu();
+		   
 		   //Создаём пункт меню для добавления нового узла дерева
 		   JMenuItem addItem = new JMenuItem("Добавить");
 		   addItem.addActionListener(event ->
-		   {});
+		   {
+			   addNode();
+		   });
+		   
 		   //Создаём пункт меню для удаления узла дерева
 		   JMenuItem deleteItem = new JMenuItem("Удалить");
 		   deleteItem.addActionListener(event ->
-		   {});
+		   {
+			   deleteNode();
+		   });
+		   
 		   //Создаём пункт меню для редактирования узла дерева
 		   JMenuItem editItem = new JMenuItem("Редактировать");
 		   editItem.addActionListener(event ->
-		   {});
+		   {
+			   
+		   });
 		   popup.add(addItem);	
 		   popup.add(deleteItem);
 		   popup.add(editItem);		  
-		   tree.setComponentPopupMenu(popup);
+		   tree.setComponentPopupMenu(popup);		   
+	   }
+	   
+	   /**Метод задаёт видимость пунктов контекстного меню.	     
+	    @param tree дерево, в котором находится контекстное меню
+	    @param first первый пункт меню
+	    @param second второй пункт
+	    @param third третий пункт*/
+	   private static void chooseVisibleJPopupMenu(JTree tree, Boolean first, Boolean second, Boolean third)
+	   {
+		   JPopupMenu menu = tree.getComponentPopupMenu();
+		   menu.getComponent(0).setVisible(first);//Делаем видимыми только пункты "удалить" и "редактировать"
+		   menu.getComponent(1).setVisible(second);
+		   menu.getComponent(2).setVisible(third);
 	   }
 	   
 	   /**Метод очищает и заполняет панель с описанием задания, полученную в качестве первого параметра,
@@ -419,5 +514,103 @@ public class Math_easyFrame extends JFrame
 		   textAria.setFont(new Font(null, Font.BOLD, 13));
 		   textAria.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));		   		   
 		   panel.add(taskDescriptionScrollPane, BorderLayout.NORTH);
+	   }
+	   
+	   /**Метод удаляет выбранный узел из дерева и базы данных.*/
+	   private static void deleteNode()
+	   {
+		   TreePath path = tree.getSelectionPath();//Получаем путь к выбранному узлу дерева
+		   if(path == null) 
+		   {   
+			   return;
+		   }
+		   DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+		   
+		   //Если выбран узел с заданием(без потомков)
+		   if(!selectionNode.getAllowsChildren())
+		   {	
+			   int i = JOptionPane.showConfirmDialog(null, "Вы уверены что хотите удалить выбранное задание?",
+					   "", JOptionPane.YES_NO_OPTION);
+			   
+			   if(i == 0)//Если удаление подтверждено
+			   {
+		           Task t = (Task)selectionNode.getUserObject();
+		           themeManager.deleteTask(t.getTaskId());//Удаляем задание из базы данных
+		           DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+		           model.removeNodeFromParent(selectionNode);//Удаляем узел с заданием из дерева
+		           taskDescriptionPanel.removeAll();//Очищаем панель с описанием задания
+		           taskDescriptionPanel.updateUI(); 
+			   }
+		   }
+		   
+		   //Если выбран корневой узел
+		   if(selectionNode.getParent() == null)
+		   {}
+		   else
+		   {
+			   //Если выбран узел с темой
+			   if(selectionNode.getParent().getParent() == null)
+			   {			       
+				   int i = JOptionPane.showConfirmDialog(null, "Вы уверены что хотите удалить выбранную тему?",
+						   "", JOptionPane.YES_NO_OPTION);
+				   
+				   if(i == 0)//Если удаление подтверждено
+				   {
+			           Theme t = (Theme)selectionNode.getUserObject();
+			           themeManager.deleteTheme(t.getTheme_id());//Удаляем тему из базы данных
+			           DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+			           model.removeNodeFromParent(selectionNode);//Удаляем узел с темой из дерева
+			           taskDescriptionPanel.removeAll();//Очищаем панель с описанием темы
+			           taskDescriptionPanel.updateUI(); 
+				   }
+			   }
+			   else
+			   {
+			      //Если выбран узел с подтемой
+			      if(selectionNode.getParent().getParent().getParent() == null)
+			      {			       
+			    	  int i = JOptionPane.showConfirmDialog(null, "Вы уверены что хотите удалить выбранную подтему?",
+							   "", JOptionPane.YES_NO_OPTION);
+					   
+					   if(i == 0)//Если удаление подтверждено
+					   {
+				           Subtheme t = (Subtheme)selectionNode.getUserObject();
+				           themeManager.deleteSubtheme(t.getSubtheme_id());//Удаляем подтему из базы данных
+				           DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+				           model.removeNodeFromParent(selectionNode);//Удаляем узел с подтемой из дерева				           
+					   }
+			      }
+			   }
+		   }
+	   }
+	   
+	   /**Метод добавляет новый узел в дерево и базу данных.*/
+	   private static void addNode()
+	   {
+		   TreePath path = tree.getSelectionPath();//Получаем путь к выбранному узлу дерева
+		   if(path == null) 
+		   {   
+			   return;
+		   }
+		   DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+		   
+		   //Если выбран корневой узел
+		   if(selectionNode.getParent() == null)
+		   {
+			   System.out.println("Добавить в корневой узел");
+			   new ThemeAddDialogPane();
+		   }
+		   else
+		   {
+			   if(selectionNode.getParent().getParent() == null)//Если выбран узел с темой
+			   {
+				   System.out.println("Добавить в узел с темой");
+			   }
+			   else//Если выбран узел с подтемой(для узлов с заданием пункт "добавить" не отображается)
+			   {
+				   System.out.println("Добавить в узел с подтемой");
+			   }
+		   }
+		   
 	   }
 }

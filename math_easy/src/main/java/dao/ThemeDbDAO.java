@@ -36,6 +36,18 @@ public class ThemeDbDAO implements ThemeDAO
 			"FROM me_task \r\n" + 
 			"WHERE subtheme_id = ? ORDER BY task_id;";
 	
+	/**SQL-команда для удаления задания*/
+	private static final String DELETE_TASK
+    = "DELETE FROM me_task WHERE task_id=?;";
+	
+	/**SQL-команда для удаления темы*/
+	private static final String DELETE_THEME
+    = "DELETE FROM me_theme WHERE theme_id=?;";
+	
+	/**SQL-команда для удаления подтемы*/
+	private static final String DELETE_SUBTHEME
+    = "DELETE FROM me_subtheme WHERE subtheme_id=?;";
+	
 	/**Список тем*/
 	private List<Theme> listTheme;
 	/**Хешь-отображение списка заданий*/
@@ -210,6 +222,61 @@ public class ThemeDbDAO implements ThemeDAO
 	{		
 		return taskMap;
 	}
+
+	/**Удалить задание по его идентификационному номеру
+     *  @param taskId идентификационный номер задания**/
+	@Override
+	public void deleteTask(Long taskId) throws ThemeDaoException 
+	{	
+	        try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(DELETE_TASK)) 
+	        {
+	            pst.setLong(1, taskId);	            
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }
+	        findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем 
+	}
 		
+	/**Удалить тему по её идентификационному номеру
+     *  @param themeId идентификационный номер темы**/
+	@Override
+	public void deleteTheme(Long themeId) throws ThemeDaoException 
+	{	
+	        try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(DELETE_THEME)) 
+	        {
+	            pst.setLong(1, themeId);	            
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }
+	        listTheme = findThemes();//Получаем список тем
+	    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
+	    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем 
+	}
 	
+	/**Удалить подтему по её идентификационному номеру
+     *  @param subthemeId идентификационный номер подтемы**/
+	@Override
+	public void deleteSubtheme(Long subthemeId) throws ThemeDaoException 
+	{	
+	        try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(DELETE_SUBTHEME)) 
+	        {
+	            pst.setLong(1, subthemeId);	            
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }	        
+	    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
+	    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем 
+	}
 }

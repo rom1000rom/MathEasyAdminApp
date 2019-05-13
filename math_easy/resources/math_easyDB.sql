@@ -85,7 +85,7 @@ CREATE TABLE me_user_theme
     solve_task integer NOT NULL,
     actual boolean NOT NULL,
     last_solved_task date,
-    PRIMARY KEY (user_id, theme_id),  
+    PRIMARY KEY (user_id, theme_id, actual),  
     FOREIGN KEY (user_id)
     REFERENCES me_user (user_id) 
     ON DELETE CASCADE,

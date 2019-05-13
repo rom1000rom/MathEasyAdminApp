@@ -44,6 +44,11 @@ public class UserDbDAO implements UserDAO
 	private static final String DELETE_USER_THEME
     = "DELETE FROM me_user_theme WHERE user_id=? AND theme_id=? AND actual=TRUE";
 	
+	/**SQL-команда для добавления актуальной темы пользователю*/
+	private static final String ADD_USER_THEME
+    = "INSERT INTO me_user_theme( user_id, theme_id, solve_task, actual, last_solved_task )\r\n" + 
+    		"VALUES ( ?, ?, ?, TRUE, null );";
+	
 	/**Список пользователей*/
 	private List<User> listUser;
 	
@@ -223,6 +228,7 @@ public class UserDbDAO implements UserDAO
            }
     	}
     }
+    
     /**Удалить актуальную тему у пользователя
      *  @param userId идентификационный номер пользователя
         @param themeId идентификационный номер темы**/
@@ -234,6 +240,27 @@ public class UserDbDAO implements UserDAO
 	        {
 	            pst.setLong(1, userId);
 	            pst.setLong(2, themeId);
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new UserDaoException(e);
+	        }
+	        findUsersTheme(listUser);//Получаем для каждого пользователя список текущих и пройденных тем
+	}
+
+	/**Добавить актуальную тему пользователю
+     *  @param userId идентификационный номер пользователя
+        @param themeId идентификационный номер темы**/
+	@Override
+	public void addUserTheme(Long userId, Long themeId, int count) throws UserDaoException 
+	{	
+	        try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(ADD_USER_THEME)) 
+	        {
+	            pst.setLong(1, userId);
+	            pst.setLong(2, themeId);
+	            pst.setLong(3, count);
 	            pst.executeUpdate();
 	        } 
 	        catch (Exception e) 

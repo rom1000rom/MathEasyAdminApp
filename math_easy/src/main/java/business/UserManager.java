@@ -48,4 +48,20 @@ public class UserManager
 			 e.printStackTrace();
 		 }	
 	}
+	
+	/**Добавить актуальную тему пользователю
+     *  @param userId идентификационный номер пользователя
+        @param themeId идентификационный номер темы
+	 * @throws UserDaoException **/
+	public void addUserTheme(Long userId, Long themeId, int count)
+	{
+		 try 
+		 {
+			 dao.addUserTheme(userId, themeId, count);
+		 } 
+		 catch (UserDaoException e) 
+		 {
+			 e.printStackTrace();
+		 }	
+	}
 }
