@@ -24,40 +24,29 @@ import javax.swing.SwingConstants;
 
 import entity.Task;
 
-/**Класс представляет панель ввода данных о новой теме.
+/**Класс представляет панель ввода данных о новой подтеме.
 @author Артемьев Р.А.
-@version 13.05.2019 */
-public class ThemeAddDialogPane extends JDialog 
+@version 15.05.2019 */
+public class SubthemeAddDialogPane extends JDialog 
 {
-	/**Название темы*/
-	private String title = null;
-	/**Краткая теоретическая справка*/
-	private String briefTheoreticalInformation = null;
+	/**Название подтемы*/
+	private String title = null;	
 	/**Подтверждён ли ввод данных*/
 	private Boolean confirm = false;
 	
-	/**Метка для ввода названия темы*/
+	/**Метка для ввода названия подтемы*/
     private final JLabel titleLabel = new JLabel();	
-	/**Поле для ввода названия темы*/
+	/**Поле для ввода названия подтемы*/
     private final JTextField titleField = new JTextField();
-    /**Поле для ввода краткой теоретической справки о теме*/
-    private final JTextArea textArea = new JTextArea(TEXTAREA_ROWS, TEXTAREA_COLUMNS);
     /**Кнопка для подтверждения ввода*/
     private final JButton okButton = new JButton("Сохранить") ;
     /**Кнопка для отмены ввода*/
     private final JButton cancelButton = new JButton("Отмена") ;
     
     /**Количество символов в поле ввода названия темы*/
-    public static final int FIELD_COLUMNS = 15;
-    /**Количество строк в поле ввода текста*/
-    public static final int TEXTAREA_ROWS = 8;
-    /**Количество символов в поле ввода текста*/
-    public static final int TEXTAREA_COLUMNS = 20;
-    /**Текст-подсказка в поле ввода краткой теоретической информации*/
-    public static final String DEFAULT_TEXT = "Краткая теоретическая справка";
+    public static final int FIELD_COLUMNS = 15;    
     
-    
-    public ThemeAddDialogPane() 
+    public SubthemeAddDialogPane() 
     {   	  
     	  //Задаём  положение панели
 	      Toolkit kit = Toolkit.getDefaultToolkit();
@@ -75,22 +64,14 @@ public class ThemeAddDialogPane extends JDialog
           JPanel northPanel= new JPanel();
 	      northPanel.setLayout(new GridLayout(1, 2));		      
 	      //Создаём метку для ввода названия
-	      titleLabel.setText("Название темы:");
+	      titleLabel.setText("Название подтемы:");
 	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
 	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 	      northPanel.add(titleLabel);
 	      titleField.setColumns(FIELD_COLUMNS);	      
 	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
 	      northPanel.add(titleField);
-	      add(northPanel, BorderLayout.NORTH);	      
-	      
-          //Добавляем поле для ввода краткой теоретической справки	      
-	      textArea.setFont(new Font(null, Font.PLAIN, 13));
-	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-	      textArea.setText(DEFAULT_TEXT);
-	      textArea.setLineWrap(true);
-	      JScrollPane scrollPane = new JScrollPane(textArea);	    
-	      add(scrollPane, BorderLayout.CENTER);	    	    	
+	      add(northPanel, BorderLayout.NORTH);	      	                	
 	    		  
           //Создаём и добавляем панель для кнопок
 	      JPanel southPanel = new JPanel();	    		 	      
@@ -99,23 +80,14 @@ public class ThemeAddDialogPane extends JDialog
 	      {	    	 
 	    	  if(titleField.getText().equals(""))
 	    	  {
-	    		  JOptionPane.showMessageDialog(null, "Введите название темы"
+	    		  JOptionPane.showMessageDialog(null, "Введите название подтемы"
 						   , " ", JOptionPane.WARNING_MESSAGE);
 	    	  }
-	    	  else
-	    	  {
-	    		  if((textArea.getText().equals("")) || (textArea.getText().equals(DEFAULT_TEXT)))
-		    	  {
-		    		  JOptionPane.showMessageDialog(null, "Введите краткую теоретическую справку о теме"
-							   , " ", JOptionPane.WARNING_MESSAGE);
-		    	  }
-	    		  else//Если введены необходимые данные
-	    		  {
-	    			  title = titleField.getText();
-	    			  briefTheoreticalInformation = textArea.getText();
-	    			  confirm = true;
-	    			  setVisible(false);
-	    		  }
+	    	  else //Если введены необходимые данные
+	    	  { 
+	    		  title = titleField.getText();	    			  
+	    		  confirm = true;
+	    		  setVisible(false);   		 
 	    	  }
 	      });
 	      	      
@@ -135,11 +107,6 @@ public class ThemeAddDialogPane extends JDialog
     public String getTitle() 
     {
         return title;
-    }
-    
-    public String getBriefTheoreticalInformation() 
-    {
-        return briefTheoreticalInformation;
     }
     
     public Boolean isConfirm() 

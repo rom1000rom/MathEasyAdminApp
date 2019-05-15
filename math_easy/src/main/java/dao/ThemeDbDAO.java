@@ -20,7 +20,7 @@ import exception.UserDaoException;
 @version 05.05.2019 */
 public class ThemeDbDAO implements ThemeDAO
 {
-	/**SQL-команда для получения всех пользователей из базы данных*/
+	/**SQL-команда для получения всех тем из базы данных*/
 	private static final String SELECT
     = "SELECT theme_id, theme_title, brief_theoretical_information FROM me_theme ORDER BY theme_title;";
 	
@@ -48,9 +48,24 @@ public class ThemeDbDAO implements ThemeDAO
 	private static final String DELETE_SUBTHEME
     = "DELETE FROM me_subtheme WHERE subtheme_id=?;";
 	
-	/**Список тем*/
+	/**SQL-команда для добавления темы*/
+	private static final String ADD_THEME
+    = "INSERT INTO me_theme( theme_title, brief_theoretical_information )\r\n" + 
+    		"VALUES ( ?, ?);";
+	
+	/**SQL-команда для добавления подтемы*/
+	private static final String ADD_SUBTHEME
+    = "INSERT INTO me_subtheme( subtheme_title, theme_id )\r\n" + 
+    		"VALUES ( ?, ?);";
+	
+	/**SQL-команда для добавления задания*/
+	private static final String ADD_TASK
+    = "INSERT INTO me_task( subtheme_id, description, answer )\r\n" + 
+    		"VALUES (? , ? , ?);";
+	
+	/**Список тем.*/
 	private List<Theme> listTheme;
-	/**Хешь-отображение списка заданий*/
+	/**Хешь-отображение списка заданий.*/
 	Map<Long, Task> taskMap = new HashMap<>(100);
 	
 	private ConnectionBuilder builder = ConnectionBuilderFactory.getConnectionBuilder();
@@ -278,5 +293,120 @@ public class ThemeDbDAO implements ThemeDAO
 	        }	        
 	    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
 	    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем 
+	}
+	
+	/**Добавить тему.
+     *  @param title название темы
+     *  @param briefTheoreticalInformation краткая теоретическая справка о теме
+     *  @return объект, представляющий тему**/
+	@Override
+	public Theme addTheme(String title, String briefTheoreticalInformation) throws ThemeDaoException 
+	{
+		try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(ADD_THEME)) 
+	        {
+	            pst.setString(1, title);	
+	            pst.setString(2, briefTheoreticalInformation);	
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }	        
+		listTheme = findThemes();//Получаем список тем
+    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
+    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем
+    	Theme theme = null;
+    	for(Theme t : listTheme)
+    	{
+    		if(t.getTheme_title().equals(title))
+    		{
+    			theme = t;
+    			break;
+    		}
+    	}
+		return theme;
+	}
+
+	/**Добавить подтему.
+     *  @param title название подтемы
+     *  @param themeId идентификационный номер темы
+     *  @return объект, представляющий подтему**/
+	@Override
+	public Subtheme addSubtheme(String title, Long themeId) throws ThemeDaoException 
+	{
+		try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(ADD_SUBTHEME)) 
+	        {
+	            pst.setString(1, title);	
+	            pst.setLong(2, themeId);	
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }	        		
+    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
+    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем
+    	Subtheme subtheme = null;
+    	for(Theme t : listTheme)
+    	{
+    		if(t.getTheme_id().equals(themeId))
+    		{
+    			for(Subtheme s : t.getSubtheme())
+    			{
+    				if(s.getSubtheme_title().equals(title))
+    	    		{
+    	    			subtheme = s;
+    	    			break;
+    	    		}
+    			}
+    		}
+    	}
+		return subtheme;
+	}
+
+	/**Добавить задание.
+     *  @param description описание задания
+     *  @param answer ответ на задание
+     *  @param idSubtheme идентификационный номер подтемы
+     *  @return объект, представляющий задание**/
+	@Override
+	public Task addTask(String description, String answer, Long idSubtheme) throws ThemeDaoException 
+	{
+		try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(ADD_TASK)) 
+	        {	            	
+	            pst.setLong(1, idSubtheme);
+	            pst.setString(2, description);
+	            pst.setString(3, answer);
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }	        		 	
+   	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем
+   	Task task = null;
+   	for(Theme t : listTheme)
+   	{ 		
+   		for(Subtheme s : t.getSubtheme())
+   		{
+   			if(s.getSubtheme_id().equals(idSubtheme))
+   	    	{
+   				for(Task ta : s.getTask())
+   		   		{
+   					//Ищем совпадение по описанию и ответу
+   		   			if(ta.getAnswer().equals(answer) && (ta.getDescription().equals(description)))
+   		   	    	{
+   		   	    		task = ta;
+   		   	    		break;
+   		   	    	}
+   		   		}  	
+   	    	}
+   		}
+   		
+   	}
+		return task;
 	}
 }

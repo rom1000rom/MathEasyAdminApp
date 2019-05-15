@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import dao.*;
+import entity.Subtheme;
 import entity.Task;
 import entity.Theme;
 import entity.User;
@@ -88,5 +89,72 @@ public class ThemeManager
 		{
 			 e.printStackTrace();
 		}	
+	}
+	
+	/**Добавить тему.
+     *  @param title название темы
+     *  @param briefTheoreticalInformation краткая теоретическая справка о теме
+     *  @return объект, представляющий тему**/	
+	public Theme addTheme(String title, String briefTheoreticalInformation) 
+	{	
+		Theme t = null;
+		try 
+		{
+			 t = dao.addTheme(title, briefTheoreticalInformation);		 
+		} 
+		catch (ThemeDaoException e) 
+		{			 
+			 e.printStackTrace();
+		}
+		finally
+		{
+			return t;
+		}
+		
+	}
+	
+	/**Добавить подтему.
+     *  @param title название подтемы
+     *  @param themeId идентификационный номер темы
+     *  @return объект, представляющий подтему**/	
+	public Subtheme addSubtheme(String title, Long themeId) 
+	{	
+		Subtheme t = null;
+		try 
+		{
+			 t = dao.addSubtheme(title, themeId);		 
+		} 
+		catch (ThemeDaoException e) 
+		{			 
+			 e.printStackTrace();
+		}
+		finally
+		{
+			return t;
+		}
+		
+	}
+	
+	/**Добавить задание.
+     *  @param description описание задания
+     *  @param answer ответ на задание
+     *  @param idSubtheme идентификационный номер подтемы
+     *  @return объект, представляющий задание**/	
+	public Task addTask(String description, String answer, Long idSubtheme)   
+	{	
+		Task t = null;
+		try 
+		{
+			 t = dao.addTask(description, answer, idSubtheme);	 
+		} 
+		catch (ThemeDaoException e) 
+		{			 
+			 e.printStackTrace();
+		}
+		finally
+		{
+			return t;
+		}
+		
 	}
 }

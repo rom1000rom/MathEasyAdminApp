@@ -15,6 +15,7 @@ import exception.UserDaoException;
 import java.awt.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -112,6 +113,7 @@ public class Math_easyFrame extends JFrame
 	      //Создаём и заполняем разделяемые панели
 	      northInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, userScrollPane, tabbetPane);
 	      southInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treePanel, taskDescriptionPanel);
+	      southInnerPane.setDividerLocation(screenWidth / 6);//Задаём положение разделителя
 	      
 	      outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,  northInnerPane, southInnerPane);
 	      outerPane.setDividerLocation(screenHeight / 4);//Задаём положение разделителя
@@ -593,22 +595,99 @@ public class Math_easyFrame extends JFrame
 			   return;
 		   }
 		   DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+		   DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
 		   
 		   //Если выбран корневой узел
 		   if(selectionNode.getParent() == null)
-		   {
-			   System.out.println("Добавить в корневой узел");
-			   new ThemeAddDialogPane();
+		   {			   
+			   ThemeAddDialogPane panel = new ThemeAddDialogPane();
+			   while(panel.isVisible())
+			   {}
+			   if(panel.isConfirm())//Если ввод данных подтверждён
+			   {
+				   String title = panel.getTitle();
+				   String briefTheoreticalInformation = panel.getBriefTheoreticalInformation();
+				   				  
+				   Enumeration<DefaultMutableTreeNode> enu = selectionNode.children();
+				   Boolean f = false;
+				   while(enu.hasMoreElements())
+				   {
+					   Theme t = (Theme)enu.nextElement().getUserObject();
+					   if(t.getTheme_title().equals(title))
+					   {
+						   f = true;						   
+					   }
+				   }
+				   if(f)//Если тема с таким названием уже добавлена
+				   {
+					   JOptionPane.showMessageDialog(null, "Тема с таким названием уже есть"
+							   , " ", JOptionPane.WARNING_MESSAGE);
+				   }
+				   else
+				   {
+					 //Добавляем тему в базу данных
+					   Theme theme = themeManager.addTheme(title, briefTheoreticalInformation);
+					   DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(theme);
+					 //Добавляем узел с темой в дерево
+			           model.insertNodeInto(newNode, selectionNode, selectionNode.getChildCount());
+				   }
+			   }
 		   }
 		   else
 		   {
 			   if(selectionNode.getParent().getParent() == null)//Если выбран узел с темой
 			   {
-				   System.out.println("Добавить в узел с темой");
+				   SubthemeAddDialogPane panel = new SubthemeAddDialogPane();
+				   while(panel.isVisible())
+				   {}
+				   if(panel.isConfirm())//Если ввод данных подтверждён
+				   {
+					   String title = panel.getTitle();				  
+					   					  
+					   Enumeration<DefaultMutableTreeNode> enu = selectionNode.children();
+					   Boolean f = false;
+					   while(enu.hasMoreElements())
+					   {
+						   Subtheme t = (Subtheme)enu.nextElement().getUserObject();
+						   if(t.getSubtheme_title().equals(title))
+						   {
+							   f = true;						   
+						   }
+					   }
+					   if(f)//Если подтема с таким названием уже добавлена
+					   {
+						   JOptionPane.showMessageDialog(null, "Подтема с таким названием уже есть"
+								   , " ", JOptionPane.WARNING_MESSAGE);
+					   }
+					   else
+					   {
+						 //Добавляем тему в базу данных
+						   Theme theme = (Theme)selectionNode.getUserObject();
+						   Subtheme subtheme = themeManager.addSubtheme(title, theme.getTheme_id());
+						   DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(subtheme);
+						 //Добавляем узел с темой в дерево
+				           model.insertNodeInto(newNode, selectionNode, selectionNode.getChildCount());
+					   }
+				   }				   
 			   }
 			   else//Если выбран узел с подтемой(для узлов с заданием пункт "добавить" не отображается)
 			   {
-				   System.out.println("Добавить в узел с подтемой");
+				   TaskAddDialogPane panel = new TaskAddDialogPane();
+				   while(panel.isVisible())
+				   {}
+				   if(panel.isConfirm())//Если ввод данных подтверждён
+				   {
+					   String answer = panel.getAnswer();
+					   String description = panel.getDescription();
+					   					  					  
+				     //Добавляем задание в базу данных
+					   Subtheme subtheme = (Subtheme)selectionNode.getUserObject();
+					   Task task = themeManager.addTask(description, answer, subtheme.getSubtheme_id());
+					   DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(task);
+					   newNode.setAllowsChildren(false);
+				     //Добавляем узел с заданием в дерево
+				       model.insertNodeInto(newNode, selectionNode, selectionNode.getChildCount());					   
+				   }			   
 			   }
 		   }
 		   

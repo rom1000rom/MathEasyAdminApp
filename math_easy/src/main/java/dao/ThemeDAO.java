@@ -2,6 +2,8 @@ package dao;
 
 import java.util.List;
 import java.util.Map;
+
+import entity.Subtheme;
 import entity.Task;
 import entity.Theme;
 import exception.ThemeDaoException;
@@ -24,4 +26,10 @@ public interface ThemeDAO
     public void deleteTheme(Long id) throws ThemeDaoException;
     /**Удалить подтему по её идентификационному номеру*/
     public void deleteSubtheme(Long id) throws ThemeDaoException;
+    /**Добавить тему*/
+    public Theme addTheme(String title, String briefTheoreticalInformation) throws ThemeDaoException;
+    /**Добавить подтему*/
+    public Subtheme addSubtheme(String title, Long idTheme) throws ThemeDaoException;
+    /**Добавить задание*/
+    public Task addTask(String description, String answer, Long idSubtheme) throws ThemeDaoException;
 }

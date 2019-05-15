@@ -25,7 +25,11 @@ import entity.Task;
 @version 08.05.2019 */
 public class TaskDialogPane extends JDialog 
 {
- 
+	/**Количество строк в поле ввода текста*/
+    public static final int TEXTAREA_ROWS = 15;
+    /**Количество символов в поле ввода текста*/
+    public static final int TEXTAREA_COLUMNS = 22;
+    
     public TaskDialogPane() 
     {}
 
@@ -35,18 +39,16 @@ public class TaskDialogPane extends JDialog
 	      Toolkit kit = Toolkit.getDefaultToolkit();
 	      Dimension screenSize = kit.getScreenSize();
 	      int screenHeight = screenSize.height + (screenSize.height/2);
-	      int screenWidth = screenSize.width;	     
-	      setSize(screenWidth / 4, screenHeight / 4);
+	      int screenWidth = screenSize.width;	     	      
 	      setLocation(screenWidth / 3, screenHeight / 6);
-	      setTitle("Список заданий");	      
+	      setTitle(" ");	      
         // Запрещаем изменение размеров
           setResizable(false);
           
           //Заполняем панель списком заданий
            setLayout(new BorderLayout());
 		   //Выводим информацию о задании
-		   JTextArea textArea = new  JTextArea();		   
-		   textArea.setRows(20);
+		   JTextArea textArea = new JTextArea(TEXTAREA_ROWS, TEXTAREA_COLUMNS);		   		   
 		   textArea.setEditable(false);
 		   textArea.setLineWrap(true);
 		   for(Task task : taskList)
@@ -60,8 +62,9 @@ public class TaskDialogPane extends JDialog
 		   textArea.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));		   		   
 		   add(taskDescriptionScrollPane, BorderLayout.NORTH);
           
-        // Делаем форму видимой
-          setVisible(true);
+           //Делаем форму видимой
+		   pack();
+           setVisible(true);
     }
 
 }

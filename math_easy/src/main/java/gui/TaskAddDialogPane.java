@@ -24,40 +24,40 @@ import javax.swing.SwingConstants;
 
 import entity.Task;
 
-/**Класс представляет панель ввода данных о новой теме.
+/**Класс представляет панель ввода данных о новом задании.
 @author Артемьев Р.А.
-@version 13.05.2019 */
-public class ThemeAddDialogPane extends JDialog 
+@version 15.05.2019 */
+public class TaskAddDialogPane extends JDialog 
 {
-	/**Название темы*/
-	private String title = null;
-	/**Краткая теоретическая справка*/
-	private String briefTheoreticalInformation = null;
-	/**Подтверждён ли ввод данных*/
+	/**Описание задания.*/
+	private String description = null;
+	/**Ответ на задание.*/
+	private String answer = null;
+	/**Подтверждён ли ввод данных.*/
 	private Boolean confirm = false;
 	
-	/**Метка для ввода названия темы*/
-    private final JLabel titleLabel = new JLabel();	
-	/**Поле для ввода названия темы*/
-    private final JTextField titleField = new JTextField();
-    /**Поле для ввода краткой теоретической справки о теме*/
+	/**Метка для ввода ответа*/
+    private final JLabel answerLabel = new JLabel();	
+	/**Поле для ввода ответа*/
+    private final JTextField answerField = new JTextField();
+    /**Поле для ввода описания задания*/
     private final JTextArea textArea = new JTextArea(TEXTAREA_ROWS, TEXTAREA_COLUMNS);
     /**Кнопка для подтверждения ввода*/
     private final JButton okButton = new JButton("Сохранить") ;
     /**Кнопка для отмены ввода*/
     private final JButton cancelButton = new JButton("Отмена") ;
     
-    /**Количество символов в поле ввода названия темы*/
+    /**Количество символов в поле ввода ответа*/
     public static final int FIELD_COLUMNS = 15;
     /**Количество строк в поле ввода текста*/
     public static final int TEXTAREA_ROWS = 8;
     /**Количество символов в поле ввода текста*/
     public static final int TEXTAREA_COLUMNS = 20;
-    /**Текст-подсказка в поле ввода краткой теоретической информации*/
-    public static final String DEFAULT_TEXT = "Краткая теоретическая справка";
+    /**Текст-подсказка в поле ввода описания задания*/
+    public static final String DEFAULT_TEXT = "Описание задания";
     
     
-    public ThemeAddDialogPane() 
+    public TaskAddDialogPane() 
     {   	  
     	  //Задаём  положение панели
 	      Toolkit kit = Toolkit.getDefaultToolkit();
@@ -74,45 +74,46 @@ public class ThemeAddDialogPane extends JDialog
           //Создаём и заполняем панель для ввода названия темы
           JPanel northPanel= new JPanel();
 	      northPanel.setLayout(new GridLayout(1, 2));		      
-	      //Создаём метку для ввода названия
-	      titleLabel.setText("Название темы:");
-	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
-	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
-	      northPanel.add(titleLabel);
-	      titleField.setColumns(FIELD_COLUMNS);	      
-	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
-	      northPanel.add(titleField);
-	      add(northPanel, BorderLayout.NORTH);	      
+	      //Создаём метку для ввода ответа
+	      answerLabel.setText("Ответ:");
+	      answerLabel.setFont(new Font(null, Font.BOLD, 14));
+	      answerLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
+	      northPanel.add(answerLabel);
+	      answerField.setColumns(FIELD_COLUMNS);	      
+	      answerField.setFont(new Font(null, Font.BOLD, 13));	     
+	      northPanel.add(answerField);
+	      northPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+	      add(northPanel, BorderLayout.CENTER);	      
 	      
-          //Добавляем поле для ввода краткой теоретической справки	      
+          //Добавляем поле для ввода описания задания	      
 	      textArea.setFont(new Font(null, Font.PLAIN, 13));
 	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 	      textArea.setText(DEFAULT_TEXT);
 	      textArea.setLineWrap(true);
 	      JScrollPane scrollPane = new JScrollPane(textArea);	    
-	      add(scrollPane, BorderLayout.CENTER);	    	    	
+	      add(scrollPane, BorderLayout.NORTH);	    	    	
 	    		  
           //Создаём и добавляем панель для кнопок
 	      JPanel southPanel = new JPanel();	    		 	      
 	      southPanel.add(okButton);//Добавляем кнопку подтверждения ввода
 	      okButton.addActionListener(event ->
 	      {	    	 
-	    	  if(titleField.getText().equals(""))
+	    	  if(answerField.getText().equals(""))
 	    	  {
-	    		  JOptionPane.showMessageDialog(null, "Введите название темы"
+	    		  JOptionPane.showMessageDialog(null, "Введите ответ на задание"
 						   , " ", JOptionPane.WARNING_MESSAGE);
 	    	  }
 	    	  else
 	    	  {
 	    		  if((textArea.getText().equals("")) || (textArea.getText().equals(DEFAULT_TEXT)))
 		    	  {
-		    		  JOptionPane.showMessageDialog(null, "Введите краткую теоретическую справку о теме"
+		    		  JOptionPane.showMessageDialog(null, "Введите описание задания"
 							   , " ", JOptionPane.WARNING_MESSAGE);
 		    	  }
 	    		  else//Если введены необходимые данные
 	    		  {
-	    			  title = titleField.getText();
-	    			  briefTheoreticalInformation = textArea.getText();
+	    			  answer = answerField.getText();
+	    			  description = textArea.getText();
 	    			  confirm = true;
 	    			  setVisible(false);
 	    		  }
@@ -132,14 +133,14 @@ public class ThemeAddDialogPane extends JDialog
           setVisible(true);
     }
 
-    public String getTitle() 
+    public String getAnswer() 
     {
-        return title;
+        return answer;
     }
     
-    public String getBriefTheoreticalInformation() 
+    public String getDescription() 
     {
-        return briefTheoreticalInformation;
+        return description;
     }
     
     public Boolean isConfirm() 
