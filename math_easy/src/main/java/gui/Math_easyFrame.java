@@ -455,7 +455,7 @@ public class Math_easyFrame extends JFrame
 		   JMenuItem editItem = new JMenuItem("Редактировать");
 		   editItem.addActionListener(event ->
 		   {
-			   
+			   editNode();
 		   });
 		   popup.add(addItem);	
 		   popup.add(deleteItem);
@@ -692,4 +692,123 @@ public class Math_easyFrame extends JFrame
 		   }
 		   
 	   }
+	   
+	   /**Метод редактирует существующий узел.*/
+	   private static void editNode()
+	   {
+		   TreePath path = tree.getSelectionPath();//Получаем путь к выбранному узлу дерева
+		   if(path == null) 
+		   {   
+			   return;
+		   }
+		   DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+		   DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+		   
+		   //Если выбран корневой узел
+		   if(selectionNode.getParent() == null)
+		   {}//Корневой узел не допускает редактирования
+		   else
+		   {
+			   if(selectionNode.getParent().getParent() == null)//Если выбран узел с темой
+			   {
+				   Theme theme = (Theme)selectionNode.getUserObject();
+				   ThemeAddDialogPane panel = new ThemeAddDialogPane(theme.getTheme_title(), 
+						   theme.getBrief_theoretical_information());//Подставляем текущее описание темы
+				   while(panel.isVisible())
+				   {}
+				   if(panel.isConfirm())//Если ввод данных подтверждён
+				   {
+					   String title = panel.getTitle();				  
+					   String briefTheoreticalInformation = panel.getBriefTheoreticalInformation();					  
+					   Enumeration<DefaultMutableTreeNode> enu = selectionNode.getParent().children();
+					   Boolean f = false;
+					   while(enu.hasMoreElements())
+					   {
+						   Theme t = (Theme)enu.nextElement().getUserObject();
+						   if((t.getTheme_title().equals(title)) && 
+								   (t.getBrief_theoretical_information().equals(briefTheoreticalInformation)))
+						   {
+							   f = true;						   
+						   }
+					   }
+					   if(f)//Если тема с таким названием и описанием уже существует
+					   {
+						   JOptionPane.showMessageDialog(null, "Тема с таким названием уже есть"
+								   , " ", JOptionPane.WARNING_MESSAGE);
+					   }
+					   else
+					   {
+						 //Редактируем тему в базе данных						   
+						 Theme newTheme = themeManager.updateTheme(title, briefTheoreticalInformation, 
+								 theme.getTheme_id());						 
+						 //Обновляем узел с темой в дереве
+						 selectionNode.setUserObject(newTheme);
+						 fillThemeInformationPanel(taskDescriptionPanel, newTheme);
+					     taskDescriptionPanel.updateUI(); 
+					   }
+				   }			   
+			   }
+			   else
+			   {
+				   //Если выбран узел с заданием(без потомков)
+				   if(!selectionNode.getAllowsChildren())
+				   {
+					   Task task = (Task)selectionNode.getUserObject();
+					   TaskAddDialogPane panel = new TaskAddDialogPane(task.getDescription(), 
+							  task.getAnswer());//Подставляем текущее описание задания
+					   
+					   while(panel.isVisible())
+					   {}
+					   if(panel.isConfirm())//Если ввод данных подтверждён
+					   {
+						   String description = panel.getDescription();				  
+						   String answer = panel.getAnswer();					  						  						   
+						   //Редактируем тему в базе данных						   
+						   Task newTask = themeManager.updateTask(description, answer, 
+								   task.getTaskId());						 
+						   //Обновляем узел с заданием в дереве
+						   selectionNode.setUserObject(newTask);
+						   fillTaskInformationPanel(taskDescriptionPanel, newTask);
+						   taskDescriptionPanel.updateUI(); 					   
+					   }			   
+				   }
+				   else//Если выбран узел с подтемой
+				   {
+				       Subtheme subtheme = (Subtheme)selectionNode.getUserObject();
+				       //Подставляем текущее название подтемы
+				       SubthemeAddDialogPane panel = new SubthemeAddDialogPane(subtheme.getSubtheme_title());
+				   
+				       while(panel.isVisible())
+				       {}
+				       if(panel.isConfirm())//Если ввод данных подтверждён
+				       {
+					       String title = panel.getTitle();				  					   				  
+					       Enumeration<DefaultMutableTreeNode> enu = selectionNode.getParent().children();
+					       Boolean f = false;
+					       while(enu.hasMoreElements())
+					       {
+						       Subtheme t = (Subtheme)enu.nextElement().getUserObject();
+						       if(t.getSubtheme_title().equals(title)) 
+						       {
+							       f = true;						   
+						       }
+					       }
+					       if(f)//Если подтема с таким названием уже существует
+					       {
+						       JOptionPane.showMessageDialog(null, "Подтема с таким названием уже есть"
+								   , " ", JOptionPane.WARNING_MESSAGE);
+					       }
+					       else
+					       {
+						      //Редактируем подтему в базе данных						   
+						      Subtheme newSubtheme = themeManager.updateSubtheme(title, subtheme.getSubtheme_id());						 
+						      //Обновляем узел с подтемой в дереве
+						      selectionNode.setUserObject(newSubtheme);						 
+					       }
+				        }			   	   
+			        }
+			   }
+		   }		    	   
+	   }
+	   
 }

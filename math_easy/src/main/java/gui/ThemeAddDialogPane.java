@@ -56,7 +56,7 @@ public class ThemeAddDialogPane extends JDialog
     /**Текст-подсказка в поле ввода краткой теоретической информации*/
     public static final String DEFAULT_TEXT = "Краткая теоретическая справка";
     
-    
+    /**Конструктор без параметров*/
     public ThemeAddDialogPane() 
     {   	  
     	  //Задаём  положение панели
@@ -105,6 +105,85 @@ public class ThemeAddDialogPane extends JDialog
 	    	  else
 	    	  {
 	    		  if((textArea.getText().equals("")) || (textArea.getText().equals(DEFAULT_TEXT)))
+		    	  {
+		    		  JOptionPane.showMessageDialog(null, "Введите краткую теоретическую справку о теме"
+							   , " ", JOptionPane.WARNING_MESSAGE);
+		    	  }
+	    		  else//Если введены необходимые данные
+	    		  {
+	    			  title = titleField.getText();
+	    			  briefTheoreticalInformation = textArea.getText();
+	    			  confirm = true;
+	    			  setVisible(false);
+	    		  }
+	    	  }
+	      });
+	      	      
+	      southPanel.add(cancelButton);//Добавляем кнопку отмены ввода
+	      cancelButton.addActionListener(event ->
+	      {
+	    	  setVisible(false);
+	      });
+	      
+	      add(southPanel, BorderLayout.SOUTH);
+	      
+	      //Делаем панель видимой
+	      pack() ;		  
+          setVisible(true);
+    }
+    
+    /**Конструктор с параметрами
+     * @param oldTitle название темы
+     * @param oldBriefTheoreticalInformation краткая теоретическая справка*/
+    public ThemeAddDialogPane(String oldTitle, String oldBriefTheoreticalInformation) 
+    {   	  
+    	  //Задаём  положение панели
+	      Toolkit kit = Toolkit.getDefaultToolkit();
+	      Dimension screenSize = kit.getScreenSize();
+	      int screenHeight = screenSize.height + (screenSize.height/4);
+	      int screenWidth = screenSize.width;
+	      setLocation(screenWidth / 3, screenHeight / 4);
+	      setTitle(" ");	      
+          // Запрещаем изменение размеров
+          setResizable(false);                      
+          setLayout(new BorderLayout());
+          setModal(true);
+          
+          //Создаём и заполняем панель для ввода названия темы
+          JPanel northPanel= new JPanel();
+	      northPanel.setLayout(new GridLayout(1, 2));		      
+	      //Создаём метку для ввода названия
+	      titleLabel.setText("Название темы:");
+	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
+	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
+	      northPanel.add(titleLabel);
+	      titleField.setText(oldTitle);
+	      titleField.setColumns(FIELD_COLUMNS);	      
+	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
+	      northPanel.add(titleField);
+	      add(northPanel, BorderLayout.NORTH);	      
+	      
+          //Добавляем поле для ввода краткой теоретической справки	      
+	      textArea.setFont(new Font(null, Font.PLAIN, 13));
+	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+	      textArea.setText(oldBriefTheoreticalInformation);
+	      textArea.setLineWrap(true);
+	      JScrollPane scrollPane = new JScrollPane(textArea);	    
+	      add(scrollPane, BorderLayout.CENTER);	    	    	
+	    		  
+          //Создаём и добавляем панель для кнопок
+	      JPanel southPanel = new JPanel();	    		 	      
+	      southPanel.add(okButton);//Добавляем кнопку подтверждения ввода
+	      okButton.addActionListener(event ->
+	      {	    	 
+	    	  if(titleField.getText().equals(""))
+	    	  {
+	    		  JOptionPane.showMessageDialog(null, "Введите название темы"
+						   , " ", JOptionPane.WARNING_MESSAGE);
+	    	  }
+	    	  else
+	    	  {
+	    		  if(textArea.getText().equals(""))
 		    	  {
 		    		  JOptionPane.showMessageDialog(null, "Введите краткую теоретическую справку о теме"
 							   , " ", JOptionPane.WARNING_MESSAGE);

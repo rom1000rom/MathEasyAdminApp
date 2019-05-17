@@ -56,7 +56,7 @@ public class TaskAddDialogPane extends JDialog
     /**Текст-подсказка в поле ввода описания задания*/
     public static final String DEFAULT_TEXT = "Описание задания";
     
-    
+    /**Конструктор без параметров*/
     public TaskAddDialogPane() 
     {   	  
     	  //Задаём  положение панели
@@ -133,6 +133,86 @@ public class TaskAddDialogPane extends JDialog
           setVisible(true);
     }
 
+    /**Конструктор с параметрами
+     * @param oldDescription описание задания
+     * @param oldAnswer ответ на задание*/
+    public TaskAddDialogPane(String oldDescription, String oldAnswer) 
+    {   	  
+    	  //Задаём  положение панели
+	      Toolkit kit = Toolkit.getDefaultToolkit();
+	      Dimension screenSize = kit.getScreenSize();
+	      int screenHeight = screenSize.height + (screenSize.height/4);
+	      int screenWidth = screenSize.width;
+	      setLocation(screenWidth / 3, screenHeight / 4);
+	      setTitle(" ");	      
+          // Запрещаем изменение размеров
+          setResizable(false);                      
+          setLayout(new BorderLayout());
+          setModal(true);
+          
+          //Создаём и заполняем панель для ввода названия темы
+          JPanel northPanel= new JPanel();
+	      northPanel.setLayout(new GridLayout(1, 2));		      
+	      //Создаём метку для ввода ответа
+	      answerLabel.setText("Ответ:");
+	      answerLabel.setFont(new Font(null, Font.BOLD, 14));
+	      answerLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
+	      northPanel.add(answerLabel);
+	      answerField.setColumns(FIELD_COLUMNS);
+	      answerField.setText(oldAnswer);
+	      answerField.setFont(new Font(null, Font.BOLD, 13));	     
+	      northPanel.add(answerField);
+	      northPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+	      add(northPanel, BorderLayout.CENTER);	      
+	      
+          //Добавляем поле для ввода описания задания	      
+	      textArea.setFont(new Font(null, Font.PLAIN, 13));
+	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+	      textArea.setText(oldDescription);	      
+	      textArea.setLineWrap(true);
+	      JScrollPane scrollPane = new JScrollPane(textArea);	    
+	      add(scrollPane, BorderLayout.NORTH);	    	    	
+	    		  
+          //Создаём и добавляем панель для кнопок
+	      JPanel southPanel = new JPanel();	    		 	      
+	      southPanel.add(okButton);//Добавляем кнопку подтверждения ввода
+	      okButton.addActionListener(event ->
+	      {	    	 
+	    	  if(answerField.getText().equals(""))
+	    	  {
+	    		  JOptionPane.showMessageDialog(null, "Введите ответ на задание"
+						   , " ", JOptionPane.WARNING_MESSAGE);
+	    	  }
+	    	  else
+	    	  {
+	    		  if(textArea.getText().equals(""))
+		    	  {
+		    		  JOptionPane.showMessageDialog(null, "Введите описание задания"
+							   , " ", JOptionPane.WARNING_MESSAGE);
+		    	  }
+	    		  else//Если введены необходимые данные
+	    		  {
+	    			  answer = answerField.getText();
+	    			  description = textArea.getText();
+	    			  confirm = true;
+	    			  setVisible(false);
+	    		  }
+	    	  }
+	      });
+	      	      
+	      southPanel.add(cancelButton);//Добавляем кнопку отмены ввода
+	      cancelButton.addActionListener(event ->
+	      {
+	    	  setVisible(false);
+	      });
+	      
+	      add(southPanel, BorderLayout.SOUTH);
+	      
+	      //Делаем панель видимой
+	      pack() ;		  
+          setVisible(true);
+    }
+    
     public String getAnswer() 
     {
         return answer;

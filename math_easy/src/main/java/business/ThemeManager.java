@@ -157,4 +157,70 @@ public class ThemeManager
 		}
 		
 	}
+	
+	/**Изменить тему.
+	 * @param newTitle новое название темы
+     * @param newBriefTheoreticalInformationn новая краткая теоретическая справка о теме
+     * @param themeId идентификационный номер темы
+     * @return объект, представляющий тему**/	
+    public Theme updateTheme(String newTitle, String newBriefTheoreticalInformation, Long themeId) 
+    {	
+		Theme t = null;
+		try 
+		{
+			 t = dao.updateTheme(newTitle, newBriefTheoreticalInformation, themeId);		 
+		} 
+		catch (ThemeDaoException e) 
+		{			 
+			 e.printStackTrace();
+		}
+		finally
+		{
+			return t;
+		}		
+	}	
+    
+    /**Изменить подтему.
+	 * @param newTitle новое название подтемы    
+     * @param subthemeId идентификационный номер подтемы
+     * @return объект, представляющий тему**/	
+    public Subtheme updateSubtheme(String newTitle, Long subthemeId) 
+    {	
+		Subtheme t = null;
+		try 
+		{
+			 t = dao.updateSubtheme(newTitle, subthemeId);		 
+		} 
+		catch (ThemeDaoException e) 
+		{			 
+			 e.printStackTrace();
+		}
+		finally
+		{
+			return t;
+		}		
+	}
+    
+    /**Изменить задание.
+	 * @param newDescription новое описание задания    
+     * @param newAnswer новы ответ на задание
+     * @param taskId идентификационный номер задания
+     * @return объект, представляющий задание**/	
+    public Task updateTask(String newDescription, String newAnswer, Long taskId)  		
+	{
+    	Task t = null;
+		try 
+		{
+			 t = dao.updateTask(newDescription, newAnswer, taskId);
+		} 
+		catch (ThemeDaoException e) 
+		{			 
+			 e.printStackTrace();
+		}
+		finally
+		{
+			return t;
+		}
+	}
+	
 }

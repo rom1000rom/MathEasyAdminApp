@@ -63,6 +63,26 @@ public class ThemeDbDAO implements ThemeDAO
     = "INSERT INTO me_task( subtheme_id, description, answer )\r\n" + 
     		"VALUES (? , ? , ?);";
 	
+	/**SQL-команда для обновления темы*/
+	private static final String UPDATE_THEME
+    = "UPDATE me_theme \r\n" + 
+    		"SET theme_title = ?,\r\n" + 
+    		"brief_theoretical_information = ?\r\n" + 
+    		"WHERE theme_id = ?;";
+	
+	/**SQL-команда для обновления подтемы*/
+	private static final String UPDATE_SUBTHEME
+    = "UPDATE me_subtheme \r\n" + 
+    		"SET subtheme_title = ?\r\n" +    		
+    		"WHERE subtheme_id = ?;";
+	
+	/**SQL-команда для обновления задания*/
+	private static final String UPDATE_TASK
+    = "UPDATE me_task \r\n" + 
+    		"SET description = ?,\r\n" + 
+    		"answer = ?\r\n" + 
+    		"WHERE task_id = ?;";
+	
 	/**Список тем.*/
 	private List<Theme> listTheme;
 	/**Хешь-отображение списка заданий.*/
@@ -408,5 +428,105 @@ public class ThemeDbDAO implements ThemeDAO
    		
    	}
 		return task;
+	}
+	
+	/**Изменить тему.
+	 * @param title новое название темы
+     * @param briefTheoreticalInformation новая краткая теоретическая справка о теме
+     * @param themeId идентификационный номер темы
+     * @return объект, представляющий тему**/
+	@Override
+    public Theme updateTheme(String newTitle, String newBriefTheoreticalInformation, Long themeId) 
+    		throws ThemeDaoException
+    		{
+    			try (Connection con = getConnection();
+    		             PreparedStatement pst = con.prepareStatement(UPDATE_THEME)) 
+    		        {   		           	
+    		            pst.setString(1, newTitle);	
+    		            pst.setString(2, newBriefTheoreticalInformation);
+    		            pst.setLong(3, themeId);
+    		            pst.executeUpdate();
+    		        } 
+    		        catch (Exception e) 
+    		        {
+    		            throw new ThemeDaoException(e);
+    		        }	        
+    			listTheme = findThemes();//Получаем список тем
+    	    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
+    	    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем
+    	    	Theme theme = null;
+    	    	for(Theme t : listTheme)
+    	    	{
+    	    		if(t.getTheme_title().equals(newTitle))
+    	    		{
+    	    			theme = t;
+    	    			break;
+    	    		}
+    	    	}
+    			return theme;
+    		}
+	
+	/**Изменить подтему.
+	 * @param title новое название подтемы    
+     * @param themeId идентификационный номер подтемы
+     * @return объект, представляющий тему**/
+	@Override
+    public Subtheme updateSubtheme(String newTitle, Long subthemeId) 
+    		throws ThemeDaoException
+    		{
+    			try (Connection con = getConnection();
+    		             PreparedStatement pst = con.prepareStatement(UPDATE_SUBTHEME)) 
+    		        {   		           	
+    		            pst.setString(1, newTitle);	   		           
+    		            pst.setLong(2, subthemeId);
+    		            pst.executeUpdate();
+    		        } 
+    		        catch (Exception e) 
+    		        {
+    		            throw new ThemeDaoException(e);
+    		        }	           			
+    	    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
+    	    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем
+    	    	
+    	    	Subtheme subtheme = null;
+    	    	for(Theme t : listTheme)
+    	    	{
+    	    			for(Subtheme s : t.getSubtheme())
+    	    			{
+    	    				if(s.getSubtheme_title().equals(newTitle))
+    	    	    		{
+    	    	    			subtheme = s;
+    	    	    			break;
+    	    	    		}
+    	    			}
+    	    	}   	    	
+    			return subtheme;
+    		}
+	
+	/**Изменить задание.
+	 * @param newDescription новое описание задания    
+     * @param newAnswer новы ответ на задание
+     * @param taskId идентификационный номер задания
+     * @return объект, представляющий задание
+	 * @throws ThemeDaoException **/
+	@Override
+    public Task updateTask(String newDescription, String newAnswer, Long taskId) 
+    		throws ThemeDaoException  		
+	{
+		try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(UPDATE_TASK)) 
+	        {   		           	
+	            pst.setString(1, newDescription);	   		           
+	            pst.setString(2, newAnswer);
+	            pst.setLong(3, taskId);
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }	           			   	
+    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем
+    	   	
+		return taskMap.get(taskId);
 	}
 }

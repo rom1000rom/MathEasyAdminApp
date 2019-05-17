@@ -46,6 +46,7 @@ public class SubthemeAddDialogPane extends JDialog
     /**Количество символов в поле ввода названия темы*/
     public static final int FIELD_COLUMNS = 15;    
     
+    /**Конструктор без параметров*/
     public SubthemeAddDialogPane() 
     {   	  
     	  //Задаём  положение панели
@@ -69,6 +70,67 @@ public class SubthemeAddDialogPane extends JDialog
 	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 	      northPanel.add(titleLabel);
 	      titleField.setColumns(FIELD_COLUMNS);	      
+	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
+	      northPanel.add(titleField);
+	      add(northPanel, BorderLayout.NORTH);	      	                	
+	    		  
+          //Создаём и добавляем панель для кнопок
+	      JPanel southPanel = new JPanel();	    		 	      
+	      southPanel.add(okButton);//Добавляем кнопку подтверждения ввода
+	      okButton.addActionListener(event ->
+	      {	    	 
+	    	  if(titleField.getText().equals(""))
+	    	  {
+	    		  JOptionPane.showMessageDialog(null, "Введите название подтемы"
+						   , " ", JOptionPane.WARNING_MESSAGE);
+	    	  }
+	    	  else //Если введены необходимые данные
+	    	  { 
+	    		  title = titleField.getText();	    			  
+	    		  confirm = true;
+	    		  setVisible(false);   		 
+	    	  }
+	      });
+	      	      
+	      southPanel.add(cancelButton);//Добавляем кнопку отмены ввода
+	      cancelButton.addActionListener(event ->
+	      {
+	    	  setVisible(false);
+	      });
+	      
+	      add(southPanel, BorderLayout.SOUTH);
+	      
+	      //Делаем панель видимой
+	      pack() ;		  
+          setVisible(true);
+    }
+    
+    /**Конструктор с параметрами
+     * @param oldTitle название подтемы*/
+    public SubthemeAddDialogPane(String oldTitle) 
+    {   	  
+    	  //Задаём  положение панели
+	      Toolkit kit = Toolkit.getDefaultToolkit();
+	      Dimension screenSize = kit.getScreenSize();
+	      int screenHeight = screenSize.height + (screenSize.height/4);
+	      int screenWidth = screenSize.width;
+	      setLocation(screenWidth / 3, screenHeight / 4);
+	      setTitle(" ");	      
+          // Запрещаем изменение размеров
+          setResizable(false);                      
+          setLayout(new BorderLayout());
+          setModal(true);
+          
+          //Создаём и заполняем панель для ввода названия темы
+          JPanel northPanel= new JPanel();
+	      northPanel.setLayout(new GridLayout(1, 2));		      
+	      //Создаём метку для ввода названия
+	      titleLabel.setText("Название подтемы:");
+	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
+	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
+	      northPanel.add(titleLabel);
+	      titleField.setColumns(FIELD_COLUMNS);	  
+	      titleField.setText(oldTitle);
 	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
 	      northPanel.add(titleField);
 	      add(northPanel, BorderLayout.NORTH);	      	                	
