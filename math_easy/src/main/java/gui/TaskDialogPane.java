@@ -26,9 +26,9 @@ import entity.Task;
 public class TaskDialogPane extends JDialog 
 {
 	/**Количество строк в поле ввода текста*/
-    public static final int TEXTAREA_ROWS = 15;
+    public static final int TEXTAREA_ROWS = 20;
     /**Количество символов в поле ввода текста*/
-    public static final int TEXTAREA_COLUMNS = 22;
+    public static final int TEXTAREA_COLUMNS = 30;
     
     public TaskDialogPane() 
     {}
@@ -58,7 +58,7 @@ public class TaskDialogPane extends JDialog
 				   "Ответ: " + task.getAnswer() + "\n-------------------------------------------------\n");	
 		   }
 		   JScrollPane taskDescriptionScrollPane = new JScrollPane(textArea);
-		   textArea.setFont(new Font(null, Font.BOLD, 13));
+		   textArea.setFont(new Font(null, Font.PLAIN, 14));
 		   textArea.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));		   		   
 		   add(taskDescriptionScrollPane, BorderLayout.NORTH);
           

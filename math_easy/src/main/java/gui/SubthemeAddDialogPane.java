@@ -66,11 +66,11 @@ public class SubthemeAddDialogPane extends JDialog
 	      northPanel.setLayout(new GridLayout(1, 2));		      
 	      //Создаём метку для ввода названия
 	      titleLabel.setText("Название подтемы:");
-	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
+	      titleLabel.setFont(new Font(null, Font.BOLD, 15));
 	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 	      northPanel.add(titleLabel);
 	      titleField.setColumns(FIELD_COLUMNS);	      
-	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
+	      titleField.setFont(new Font(null, Font.PLAIN, 15));	     
 	      northPanel.add(titleField);
 	      add(northPanel, BorderLayout.NORTH);	      	                	
 	    		  
@@ -126,12 +126,12 @@ public class SubthemeAddDialogPane extends JDialog
 	      northPanel.setLayout(new GridLayout(1, 2));		      
 	      //Создаём метку для ввода названия
 	      titleLabel.setText("Название подтемы:");
-	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
+	      titleLabel.setFont(new Font(null, Font.BOLD, 15));
 	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 	      northPanel.add(titleLabel);
 	      titleField.setColumns(FIELD_COLUMNS);	  
 	      titleField.setText(oldTitle);
-	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
+	      titleField.setFont(new Font(null, Font.PLAIN, 15));	     
 	      northPanel.add(titleField);
 	      add(northPanel, BorderLayout.NORTH);	      	                	
 	    		  

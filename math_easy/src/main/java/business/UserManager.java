@@ -4,7 +4,6 @@ import java.util.List;
 
 import dao.*;
 import entity.User;
-import exception.UserBusinessException;
 import exception.UserDaoException;
 
 /**Класс для реализации функций над списком пользователей.

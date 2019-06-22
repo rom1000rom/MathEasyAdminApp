@@ -13,6 +13,7 @@ public class ConnectionBuilderFactory
     @return экземпляр ConnectionBuilder*/
     public static ConnectionBuilder getConnectionBuilder() 
     {
+    	
         try 
         {
         	//Class dao = Class.forName("connection.SimpleConnectionBuilder");

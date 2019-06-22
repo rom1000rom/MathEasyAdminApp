@@ -26,7 +26,9 @@ import java.util.Map;
 public class Math_easyFrame extends JFrame
 {
 	   /**Высота строк таблиц.*/
-	   public static final int ROW_HEIGHT = 20;
+	   public static final int ROW_HEIGHT = 20;	   
+	   /**Количество строк в поле ввода текста*/
+	    public static final int TEXTAREA_ROWS = 14;
 	   /**Внутренняя разделяемая панель для отображения списка пользователей и информации о них*/
 	   private final JSplitPane  northInnerPane;
 	   /**Внутренняя разделяемая панель для отображения дерева тем, подтем и заданий*/
@@ -111,13 +113,13 @@ public class Math_easyFrame extends JFrame
 	      fillTreePanel(treePanel, themeManager.getThemeList());
 	      	          	      
 	      //Создаём и заполняем разделяемые панели
-	      northInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, userScrollPane, tabbetPane);
-	      southInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treePanel, taskDescriptionPanel);
+	      northInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, userScrollPane, tabbetPane);	      
+	      southInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treePanel, taskDescriptionPanel);	      
 	      southInnerPane.setDividerLocation(screenWidth / 6);//Задаём положение разделителя
 	      
-	      outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,  northInnerPane, southInnerPane);
+	      outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,  northInnerPane, southInnerPane);	     
 	      outerPane.setDividerLocation(screenHeight / 4);//Задаём положение разделителя
-	      add(outerPane, BorderLayout.CENTER);
+	      add(outerPane, BorderLayout.CENTER);	     
 	   }
 	   
 	   /**Метод очищает и заполняет панель с личной информацией пользователя, полученную в качестве первого параметра,
@@ -148,6 +150,7 @@ public class Math_easyFrame extends JFrame
 		   dateOfRegistration.setFont(new Font(null, Font.BOLD, 14));
 		   dateOfRegistration.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));		   	   
 		   panel.add(dateOfRegistration);
+		   
 	   }
 	   
 	   /**Метод заполняет панель полученную в качестве параметра информацией
@@ -155,7 +158,7 @@ public class Math_easyFrame extends JFrame
 	    @param userThemePanel панель с актуальными и пройденными темами */
 	   private static void fillUserThemePanel(JPanel userThemePanel)
 	   {	     
-		      JPanel tablePanel = new JPanel(new GridLayout(2, 0));//Панель для таблиц         
+		      JPanel tablePanel = new JPanel(new GridLayout(2, 0));//Панель для таблиц  		      
 		      userThemePanel.setLayout(new BorderLayout());
 		      userThemePanel.add(tablePanel, BorderLayout.CENTER);
 		      
@@ -168,12 +171,12 @@ public class Math_easyFrame extends JFrame
 		      northLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 		      northPanel.add(northLabel, BorderLayout.NORTH);
 		      //Задаём параметры таблицы актуальных тем
-		      JScrollPane actualThemeScrollPane = new JScrollPane(actualThemeTable);		     
-		      actualThemeTable.setRowHeight(ROW_HEIGHT); 		      
-		      actualThemeTable.setFont(new Font(null, Font.BOLD, 12));
-		      actualThemeTable.getTableHeader().setFont(new Font(null, Font.BOLD, 12));
+		      JScrollPane actualThemeScrollPane = new JScrollPane(actualThemeTable);			      
+		      actualThemeTable.setRowHeight(ROW_HEIGHT); 		  
+		      actualThemeTable.setFont(new Font(null, Font.PLAIN, 13));
+		      actualThemeTable.getTableHeader().setFont(new Font(null, Font.BOLD, 13));
 		      northPanel.add(actualThemeScrollPane, BorderLayout.CENTER);
-		      tablePanel.add(northPanel);
+		      tablePanel.add(northPanel);		      		      
 		      
 		      //Заполняем южную панель с пройденными темами
 		      JPanel southPanel= new JPanel();
@@ -186,8 +189,8 @@ public class Math_easyFrame extends JFrame
 		      //Задаём параметры таблицы пройденных тем
 		      JScrollPane notActualThemeScrollPane = new JScrollPane(notActualThemeTable);
 		      notActualThemeTable.setRowHeight(ROW_HEIGHT); 
-		      notActualThemeTable.setFont(new Font(null, Font.BOLD, 12));
-		      notActualThemeTable.getTableHeader().setFont(new Font(null, Font.BOLD, 12));
+		      notActualThemeTable.setFont(new Font(null, Font.PLAIN, 13));
+		      notActualThemeTable.getTableHeader().setFont(new Font(null, Font.BOLD, 13));
 		      southPanel.add(notActualThemeScrollPane, BorderLayout.CENTER);
 		      tablePanel.add(southPanel);
 		      
@@ -304,7 +307,7 @@ public class Math_easyFrame extends JFrame
 		   //Задаём параметры таблицы входов пользователя в программу
 		   JScrollPane userInputScrollPane = new JScrollPane(userInputTable);
 		   userInputTable.setRowHeight(ROW_HEIGHT); 
-		   userInputTable.setFont(new Font(null, Font.BOLD, 12));
+		   userInputTable.setFont(new Font(null, Font.PLAIN, 13));
 		   userInputTable.getTableHeader().setFont(new Font(null, Font.BOLD, 12));
 		   userInputPanel.add(userInputScrollPane, BorderLayout.CENTER);
 		   
@@ -430,7 +433,7 @@ public class Math_easyFrame extends JFrame
 			   
 		   });
 		   
-		   JScrollPane treeScrollPane = new JScrollPane(tree);
+		   JScrollPane treeScrollPane = new JScrollPane(tree);		   
 		   treePanel.setLayout(new BorderLayout());
 		   treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		   
@@ -488,16 +491,17 @@ public class Math_easyFrame extends JFrame
 		   JTextArea textAria = new  JTextArea();
 		   textAria.setEditable(false);
 		   textAria.setLineWrap(true);
+		   textAria.setWrapStyleWord(true);
+		   textAria.setRows(TEXTAREA_ROWS);
 		   textAria.setText("Задание№ " + task.getTaskId()  + "\n\n" +
 				   "Описание задания: \n" + task.getDescription() + "\n\n" +
 				   "Ответ: " + task.getAnswer());		   	   
 		   JScrollPane taskDescriptionScrollPane = new JScrollPane(textAria);
-		   textAria.setFont(new Font(null, Font.BOLD, 13));
+		   textAria.setFont(new Font(null, Font.PLAIN, 14));
 		   textAria.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));		   		   
 		   panel.add(taskDescriptionScrollPane, BorderLayout.NORTH);
 	   }
 	   
-
 	   /**Метод очищает и заполняет панель с краткой теоретической информации о теме, 
 	    * полученной в качестве второго параметра.	    
 	    @param panel панель 
@@ -508,12 +512,15 @@ public class Math_easyFrame extends JFrame
 		   panel.setLayout(new BorderLayout());
 		   //Выводим краткую теоретическую информацию о теме
 		   JTextArea textAria = new  JTextArea();
+		   textAria.setRows(TEXTAREA_ROWS);
 		   textAria.setEditable(false);
 		   textAria.setLineWrap(true);
+		   textAria.setWrapStyleWord(true);
+		   
 		   textAria.setText("Тема: " + theme.getTheme_title()  + "\n\n" +
 				   "Краткая теоретическая информация: \n\r" + theme.getBrief_theoretical_information());		   	   
 		   JScrollPane taskDescriptionScrollPane = new JScrollPane(textAria);
-		   textAria.setFont(new Font(null, Font.BOLD, 13));
+		   textAria.setFont(new Font(null, Font.PLAIN, 14));
 		   textAria.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));		   		   
 		   panel.add(taskDescriptionScrollPane, BorderLayout.NORTH);
 	   }

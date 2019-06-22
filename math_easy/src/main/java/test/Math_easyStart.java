@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import config.GlobalConfig;
 import gui.Math_easyFrame;
+import gui.PasswordEntryDialogPane;
 
 /**Класс служит для запуска приложения.
 @author Артемьев Р.А.
@@ -24,11 +25,15 @@ public class Math_easyStart
     	//Создаём фрейм и делаем его видимым
 	    EventQueue.invokeLater(()->
 	    {
-	    	JFrame myframe = new Math_easyFrame();
-	    	myframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    	myframe.setTitle("Math Easy");
-	    	myframe.setResizable(false);	    	
-	    	myframe.setVisible(true);
+	    	PasswordEntryDialogPane passwordPane = new PasswordEntryDialogPane();//Создаём панель ввода пароля
+	    	if(passwordPane.isAccessConfirmed())
+	    	{
+	    	   JFrame myframe = new Math_easyFrame();
+	    	   myframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    	   myframe.setTitle("Math Easy");
+	    	   myframe.setResizable(false);	    	
+	    	   myframe.setVisible(true);
+	    	}
 	    });   
         
     }

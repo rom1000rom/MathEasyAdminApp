@@ -50,9 +50,9 @@ public class TaskAddDialogPane extends JDialog
     /**Количество символов в поле ввода ответа*/
     public static final int FIELD_COLUMNS = 15;
     /**Количество строк в поле ввода текста*/
-    public static final int TEXTAREA_ROWS = 8;
+    public static final int TEXTAREA_ROWS = 15;
     /**Количество символов в поле ввода текста*/
-    public static final int TEXTAREA_COLUMNS = 20;
+    public static final int TEXTAREA_COLUMNS = 25;
     /**Текст-подсказка в поле ввода описания задания*/
     public static final String DEFAULT_TEXT = "Описание задания";
     
@@ -76,19 +76,20 @@ public class TaskAddDialogPane extends JDialog
 	      northPanel.setLayout(new GridLayout(1, 2));		      
 	      //Создаём метку для ввода ответа
 	      answerLabel.setText("Ответ:");
-	      answerLabel.setFont(new Font(null, Font.BOLD, 14));
-	      answerLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
+	      answerLabel.setFont(new Font(null, Font.BOLD, 15));
+	      answerLabel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));	
 	      northPanel.add(answerLabel);
 	      answerField.setColumns(FIELD_COLUMNS);	      
-	      answerField.setFont(new Font(null, Font.BOLD, 13));	     
+	      answerField.setFont(new Font(null, Font.PLAIN, 15));	     
 	      northPanel.add(answerField);
 	      northPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 	      add(northPanel, BorderLayout.CENTER);	      
 	      
           //Добавляем поле для ввода описания задания	      
-	      textArea.setFont(new Font(null, Font.PLAIN, 13));
+	      textArea.setFont(new Font(null, Font.PLAIN, 14));
 	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 	      textArea.setText(DEFAULT_TEXT);
+	      textArea.setWrapStyleWord(true);
 	      textArea.setLineWrap(true);
 	      JScrollPane scrollPane = new JScrollPane(textArea);	    
 	      add(scrollPane, BorderLayout.NORTH);	    	    	
@@ -155,21 +156,22 @@ public class TaskAddDialogPane extends JDialog
 	      northPanel.setLayout(new GridLayout(1, 2));		      
 	      //Создаём метку для ввода ответа
 	      answerLabel.setText("Ответ:");
-	      answerLabel.setFont(new Font(null, Font.BOLD, 14));
+	      answerLabel.setFont(new Font(null, Font.BOLD, 15));
 	      answerLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 	      northPanel.add(answerLabel);
 	      answerField.setColumns(FIELD_COLUMNS);
 	      answerField.setText(oldAnswer);
-	      answerField.setFont(new Font(null, Font.BOLD, 13));	     
+	      answerField.setFont(new Font(null, Font.PLAIN, 15));	     
 	      northPanel.add(answerField);
 	      northPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 	      add(northPanel, BorderLayout.CENTER);	      
 	      
           //Добавляем поле для ввода описания задания	      
-	      textArea.setFont(new Font(null, Font.PLAIN, 13));
+	      textArea.setFont(new Font(null, Font.PLAIN, 14));
 	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 	      textArea.setText(oldDescription);	      
 	      textArea.setLineWrap(true);
+	      textArea.setWrapStyleWord(true);
 	      JScrollPane scrollPane = new JScrollPane(textArea);	    
 	      add(scrollPane, BorderLayout.NORTH);	    	    	
 	    		  

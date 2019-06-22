@@ -50,9 +50,9 @@ public class ThemeAddDialogPane extends JDialog
     /**Количество символов в поле ввода названия темы*/
     public static final int FIELD_COLUMNS = 15;
     /**Количество строк в поле ввода текста*/
-    public static final int TEXTAREA_ROWS = 8;
+    public static final int TEXTAREA_ROWS = 15;
     /**Количество символов в поле ввода текста*/
-    public static final int TEXTAREA_COLUMNS = 20;
+    public static final int TEXTAREA_COLUMNS = 25;
     /**Текст-подсказка в поле ввода краткой теоретической информации*/
     public static final String DEFAULT_TEXT = "Краткая теоретическая справка";
     
@@ -76,18 +76,19 @@ public class ThemeAddDialogPane extends JDialog
 	      northPanel.setLayout(new GridLayout(1, 2));		      
 	      //Создаём метку для ввода названия
 	      titleLabel.setText("Название темы:");
-	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
+	      titleLabel.setFont(new Font(null, Font.BOLD, 15));
 	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 	      northPanel.add(titleLabel);
 	      titleField.setColumns(FIELD_COLUMNS);	      
-	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
+	      titleField.setFont(new Font(null, Font.PLAIN, 15));	     
 	      northPanel.add(titleField);
 	      add(northPanel, BorderLayout.NORTH);	      
 	      
           //Добавляем поле для ввода краткой теоретической справки	      
-	      textArea.setFont(new Font(null, Font.PLAIN, 13));
+	      textArea.setFont(new Font(null, Font.PLAIN, 14));
 	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 	      textArea.setText(DEFAULT_TEXT);
+	      textArea.setWrapStyleWord(true);
 	      textArea.setLineWrap(true);
 	      JScrollPane scrollPane = new JScrollPane(textArea);	    
 	      add(scrollPane, BorderLayout.CENTER);	    	    	
@@ -154,17 +155,18 @@ public class ThemeAddDialogPane extends JDialog
 	      northPanel.setLayout(new GridLayout(1, 2));		      
 	      //Создаём метку для ввода названия
 	      titleLabel.setText("Название темы:");
-	      titleLabel.setFont(new Font(null, Font.BOLD, 14));
+	      titleLabel.setFont(new Font(null, Font.BOLD, 15));
 	      titleLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 	      northPanel.add(titleLabel);
 	      titleField.setText(oldTitle);
 	      titleField.setColumns(FIELD_COLUMNS);	      
-	      titleField.setFont(new Font(null, Font.BOLD, 13));	     
+	      titleField.setFont(new Font(null, Font.PLAIN, 15));	     
 	      northPanel.add(titleField);
 	      add(northPanel, BorderLayout.NORTH);	      
 	      
           //Добавляем поле для ввода краткой теоретической справки	      
-	      textArea.setFont(new Font(null, Font.PLAIN, 13));
+	      textArea.setFont(new Font(null, Font.PLAIN, 14));
+	      textArea.setWrapStyleWord(true);
 	      textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 	      textArea.setText(oldBriefTheoreticalInformation);
 	      textArea.setLineWrap(true);

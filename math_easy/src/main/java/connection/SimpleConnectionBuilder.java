@@ -32,4 +32,5 @@ public class SimpleConnectionBuilder implements ConnectionBuilder
         String password = GlobalConfig.getProperty("db.password");
         return DriverManager.getConnection(url, login, password);
     }
+    
 }
