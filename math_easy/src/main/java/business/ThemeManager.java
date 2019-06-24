@@ -109,9 +109,31 @@ public class ThemeManager
 		finally
 		{
 			return t;
-		}
-		
+		}	
 	}
+	
+	/**Добавить тему с указанием её ID.
+	 *  @param id идентификационный номер темы
+     *  @param title название темы
+     *  @param briefTheoreticalInformation краткая теоретическая справка о теме
+     *  @return объект, представляющий тему**/
+	public Theme addTheme(Long id, String title, String briefTheoreticalInformation) 
+	{	
+		Theme t = null;
+		try 
+		{
+			 t = dao.addTheme(id, title, briefTheoreticalInformation);		 
+		} 
+		catch (ThemeDaoException e) 
+		{			 
+			 e.printStackTrace();
+		}
+		finally
+		{
+			return t;
+		}	
+	}
+	
 	
 	/**Добавить подтему.
      *  @param title название подтемы

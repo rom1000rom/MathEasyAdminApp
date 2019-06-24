@@ -53,6 +53,11 @@ public class ThemeDbDAO implements ThemeDAO
     = "INSERT INTO me_theme( theme_title, brief_theoretical_information )\r\n" + 
     		"VALUES ( ?, ?);";
 	
+	/**SQL-команда для добавления темы с указанием её ID*/
+	private static final String ADD_THEME_ID
+    = "INSERT INTO me_theme(theme_id, theme_title, brief_theoretical_information )\r\n" + 
+    		"VALUES (?, ?, ?);";
+	
 	/**SQL-команда для добавления подтемы*/
 	private static final String ADD_SUBTHEME
     = "INSERT INTO me_subtheme( subtheme_title, theme_id )\r\n" + 
@@ -348,6 +353,41 @@ public class ThemeDbDAO implements ThemeDAO
 		return theme;
 	}
 
+	/**Добавить тему с указанием её ID.
+	 *  @param id идентификационный номер темы
+     *  @param title название темы
+     *  @param briefTheoreticalInformation краткая теоретическая справка о теме
+     *  @return объект, представляющий тему**/
+	@Override
+	public Theme addTheme(Long id, String title, String briefTheoreticalInformation) throws ThemeDaoException 
+	{
+		try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(ADD_THEME_ID)) 
+	        {
+			    pst.setLong(1, id);
+	            pst.setString(2, title);	
+	            pst.setString(3, briefTheoreticalInformation);	
+	            pst.executeUpdate();
+	        } 
+	        catch (Exception e) 
+	        {
+	            throw new ThemeDaoException(e);
+	        }	        
+		listTheme = findThemes();//Получаем список тем
+    	findSubtheme(listTheme);//Получаем список подтем для каждой темы
+    	findTask(listTheme);//Получаем список заданий для каждой подтемы списка тем
+    	Theme theme = null;
+    	for(Theme t : listTheme)
+    	{
+    		if(t.getTheme_title().equals(title))
+    		{
+    			theme = t;
+    			break;
+    		}
+    	}
+		return theme;
+	}
+	
 	/**Добавить подтему.
      *  @param title название подтемы
      *  @param themeId идентификационный номер темы

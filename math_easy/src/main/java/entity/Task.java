@@ -74,7 +74,8 @@ public class Task
     @Override
     public String toString() 
     {
-        return "Task№" + taskId;
+        return "Task{" + "task_id=" + taskId + 
+                ", subtheme_Id=" + subtheme_Id +'}';
     }
 }
 

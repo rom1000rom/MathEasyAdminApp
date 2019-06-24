@@ -35,6 +35,9 @@ public interface ThemeDAO
     /**Добавить тему*/
     public Theme addTheme(String title, String briefTheoreticalInformation) throws ThemeDaoException;
     
+    /**Добавить тему с указанием её ID*/
+    public Theme addTheme(Long id, String title, String briefTheoreticalInformation) throws ThemeDaoException;
+    
     /**Добавить подтему*/
     public Subtheme addSubtheme(String title, Long idTheme) throws ThemeDaoException;
     

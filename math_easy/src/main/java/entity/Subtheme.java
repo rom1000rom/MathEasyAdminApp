@@ -74,6 +74,8 @@ public class Subtheme
     @Override
     public String toString() 
     {
-        return subtheme_title;
+        return "Subtheme{" + "subtheme_id=" + subtheme_id + 
+                ", theme_id=" + theme_id +
+                ", subtheme_title=" + subtheme_title +'}';
     }
 }
